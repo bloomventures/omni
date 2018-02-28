@@ -1,12 +1,16 @@
 (ns bloom.omni.uuid
-  "Provides (uuid) function, in clj and cljs, for creating random uuids and converting strings to uuids")
+  "Provides clj+cljs functions for working with uuids:
+    (uuid/random) 
+    (uuid/from-string s)")
 
-(defn uuid
-  "When passed a string, attempts to convert it to a UUID.
-  When called without arguments, returns a random UUID. "
-  ([] 
-   #?(:cljs (random-uuid)
-      :clj (java.util.UUID/randomUUID)))
-  ([uuid-string] 
-   #?(:cljs (uuid uuid-string)
-      :clj (java.util.UUID/fromString uuid-string))))
+(defn random 
+  "Generates a random v4 UUID"
+  []
+  #?(:cljs (random-uuid)
+     :clj (java.util.UUID/randomUUID)))
+
+(defn from-string 
+  "Converts string representation of uuid into native UUID"
+  [uuid-string]
+  #?(:cljs (cljs.core/uuid uuid-string)
+     :clj (java.util.UUID/fromString uuid-string)))
