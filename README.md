@@ -5,7 +5,7 @@ A collection of lein tools, namespaces and functions, commonly used across Bloom
 Including:
 
 ```clojure
-[bloom/omni "0.0.2"]
+[bloom/omni "0.1.0"]
 ```
 
 ## Dev
