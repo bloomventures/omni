@@ -2,10 +2,12 @@
 
 A collection of lein tools, namespaces and functions, commonly used across Bloom projects.
 
-Including:
+## Using Omni
+
+Include the following dependency in your `project.clj`:
 
 ```clojure
-[bloom/omni "0.1.0"]
+[bloom/omni "0.2.0"]
 ```
 
 ## Dev
