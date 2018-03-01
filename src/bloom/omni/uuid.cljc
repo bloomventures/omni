@@ -1,7 +1,13 @@
 (ns bloom.omni.uuid
-  "Provides clj+cljs functions for working with uuids:
-    (uuid/random) 
-    (uuid/from-string s)")
+  "Provides clj+cljs functions for working with uuids.
+
+  ```clojure
+  (require '[bloom.omni.uuid :as uuid])
+   
+  (uuid/random) 
+   
+  (uuid/from-string s)
+  ```")
 
 (defn random 
   "Generates a random v4 UUID"
