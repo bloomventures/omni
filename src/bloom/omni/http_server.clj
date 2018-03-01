@@ -1,9 +1,9 @@
 (ns bloom.omni.http-server
-  "Provides a mount system that starts/stop an http-kit server.
+  "Provides a mount component that starts/stop an http-kit server.
   
   ```clojure
   (require '[bloom.omni.http-server :as http-server])
-  (mount/start #'http-server/system)
+  (mount/start #'http-server/component)
   ```"
   (:require
    [org.httpkit.server :refer [run-server]]
@@ -25,6 +25,6 @@
     (println (str "HTTP server started on http://127.0.0.1:" port "/"))
     server))
 
-(mount/defstate system
+(mount/defstate component
   :start (start-server! (config :http-port))
-  :stop (stop-server! system))
+  :stop (stop-server! component))

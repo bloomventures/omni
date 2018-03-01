@@ -1,11 +1,11 @@
 (ns bloom.omni.css-watcher
-  "Provides a mount system that watches the src directory for changes to cljc files and compiles garden to css. 
+  "Provides a mount component that watches the src directory for changes to cljc files and compiles garden to css. 
 
   Requires `{:css {:main \"...\"}}` to be set in `omni.config.edn`
   
   ```clojure
   (require '[bloom.omni.css-watcher :as css-watcher])
-  (mount/start #'css-watcher/system)
+  (mount/start #'css-watcher/component)
   ```"
   (:require
     [clojure.string :as string]
@@ -41,6 +41,6 @@
                        (compile!))
                      nil)}])))
 
-(mount/defstate system
+(mount/defstate component
   :start (start-watcher! (config :css))
-  :stop (stop-watcher! system))
+  :stop (stop-watcher! component))

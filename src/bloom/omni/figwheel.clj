@@ -1,9 +1,9 @@
 (ns bloom.omni.figwheel
-  "Provides a mount system that starts/stops figwheel.
+  "Provides a mount component that starts/stops figwheel.
   
   ```clojure
   (require '[bloom.omni.figwheel :as figwheel])
-  (mount/start #'figwheel/system)
+  (mount/start #'figwheel/component)
   ```"
   (:require 
     [mount.core :as mount]
@@ -30,6 +30,6 @@
 (defn- stop! []
   (repl-api/stop-figwheel!))
 
-(mount/defstate system
+(mount/defstate component
   :start (start! config)
   :stop (stop!))
