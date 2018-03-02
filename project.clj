@@ -23,6 +23,10 @@
                  ; figwheel
                  [figwheel-sidecar "0.5.14"]
 
+                 ; ajax
+                 [cljs-ajax "0.7.2"]
+                 [com.cognitect/transit-cljs "0.8.243"]
+
                  ; impl.async
                  [org.clojure/core.async "0.4.474"]
 
