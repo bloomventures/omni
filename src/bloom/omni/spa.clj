@@ -1,0 +1,61 @@
+(ns bloom.omni.spa
+  "Exposes a set of omni-style routes for serving an SPA, including:
+     - 'immutable' app.js 
+     - resource routes (server from /public/*)
+     - a catch-all html file that refers app.js and styles.css with cache-busting and integrity checking"
+  (:require
+    [mount.core :as mount]
+    [hiccup.core :refer [html]]
+    [ring.util.response :as ring.response]
+    [ring.util.mime-type :as ring.mime]
+    [bloom.omni.impl.digest :as digest]
+    [bloom.omni.impl.config :refer [config]]))
+
+(defn- index-page []
+  (let [title (get-in config [:title])
+        main (get-in config [:cljs :main])]
+    [:html
+     [:head
+      [:title title]
+      (let [digest (digest/from-file "public/css/styles.css")]
+        [:link {:rel "stylesheet" 
+                :href (str "/css/styles.css?v=" digest) 
+                :media "screen" 
+                :integrity (str "sha256-" digest)}])]
+     [:body
+      [:div#app]
+      (let [digest (digest/from-file "public/js/app.js")]
+        [:script {:type "text/javascript"
+                  :src (str "/js/app.js?v=" digest)
+                  :crossorigin "anonymous"
+                  :integrity (str "sha256-" digest)}])
+      [:script {:type "text/javascript"}
+       (str main ".init();")]]]))
+
+(defn- add-mime-type [response path]
+  (if-let [mime-type (ring.mime/ext-mime-type path)]
+    (ring.response/content-type response mime-type)
+    response))
+
+(defn- resource-response [path]
+  (some-> 
+    (ring.response/resource-response path)
+    (add-mime-type path)))
+
+(def routes 
+  [[:get "/js/app.js"] 
+   (fn [_]
+     (some-> (resource-response "public/js/app.js")
+             (assoc-in 
+               [:headers "Cache-Control"] 
+               "max-age=365000000, immutable")))
+
+   [:get "/*"]
+   (fn [r]
+     (resource-response (str "public/" (-> r :params :*))))
+
+   [:get "/*"]
+   (fn [_]
+     {:status 200
+      :headers {"Content-Type" "text/html; charset=utf-8"}
+      :body (html (index-page))})])

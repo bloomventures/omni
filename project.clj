@@ -4,7 +4,6 @@
                  [mount "0.1.12"]
 
                  ; spa
-                 [compojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [ring/ring-core "1.6.3"]
 
@@ -20,12 +19,15 @@
                  ; router
                  [secretary "1.2.3"] 
                  [venantius/accountant "0.2.4"]
-                 
+
                  ; figwheel
                  [figwheel-sidecar "0.5.14"]
 
                  ; impl.async
                  [org.clojure/core.async "0.4.474"]
-                 
+
                  ; impl.digest
-                 [commons-codec "1.10"]])
+                 [commons-codec "1.10"]
+                 
+                 ; impl.router
+                 [clout "2.1.2"]])
