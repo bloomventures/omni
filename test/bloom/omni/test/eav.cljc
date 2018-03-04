@@ -4,14 +4,14 @@
     [bloom.omni.eav :as eav]))
 
 (def tests
-  [{:id "single record, no rels"
+  [{:id "single rec, no rels"
     :recs [{:id "foo"
             :value "bar"}]
     :eavs [["foo" :id "foo"]
            ["foo" :value "bar"]]
     :rels {}}
 
-   {:id "multiple records, no rels"
+   {:id "multiple recs, no rels"
     :recs [{:id "foo"
             :value "bar"}
            {:id "abc"
@@ -165,18 +165,15 @@
             :location {:id :toronto
                        :city "Toronto"
                        :country "Canada"}
-            :pets [{:id :doggo
-                    :name "Doggo"
+            :pets [{:name "Doggo"
                     :type :dog}
-                   {:id :woofles
-                    :name "Woofles"
+                   {:name "Woofles"
                     :type :dog}]}
            {:id :b
             :name "Bob"
             :emails ["bob@example.com"]
             :friend-ids [:a]
-            :pets [{:id :meowsers
-                    :name "Meowsers"
+            :pets [{:name "Meowsers"
                     :type :cat}]}
            #_{:id :c
               :name "Cathy"
@@ -198,23 +195,20 @@
            [:toronto :id :toronto]
            [:toronto :city "Toronto"]
            [:toronto :country "Canada"]
-           [:a :pets :doggo]
-           [:doggo :id :doggo]
-           [:doggo :name "Doggo"]
-           [:doggo :type :dog]
-           [:a :pets :woofles]
-           [:woofles :id :woofles]
-           [:woofles :name "Woofles"]
-           [:woofles :type :dog]
+           [:a :pets -1611178140]
+           [-1611178140 :name "Doggo"]
+           [-1611178140 :type :dog]
+           [:a :pets 657552642]
+           [657552642 :name "Woofles"]
+           [657552642 :type :dog]
            ; b
            [:b :id :b]
            [:b :name "Bob"]
            [:b :emails "bob@example.com"]
            [:b :friend-ids :a]
-           [:b :pets :meowsers]
-           [:meowsers :id :meowsers]
-           [:meowsers :name "Meowsers"]
-           [:meowsers :type :cat]
+           [:b :pets 579057835]
+           [579057835 :name "Meowsers"]
+           [579057835 :type :cat]
            ; c
            #_[:c :id :c]
            #_[:c :name "Cathy"]
@@ -230,16 +224,30 @@
 (deftest all
   (doseq [t tests]
     (testing (str "test " (t :id))
-      (testing "eav->record"
+
+      (testing "eavs->recs"
         (is (= (set (t :recs)) 
-               (set (eav/eav->record
+               (set (eav/eavs->recs
                       (t :eavs)
                       (t :rels))))))
-      (testing "record->eav"
+
+      (testing "recs->eav"
         (is (= (set (t :eavs)) 
-               (set (eav/record->eav
+               (set (eav/recs->eavs
                       (t :recs))))))
-      (testing "eav->record -> record->eav") ;TODO
-      (testing "record->eav -> eav->record") ;TODO
-      )))
+
+      (testing "recs->rels"
+        (is (= (t :rels) 
+               (eav/recs->rels
+                 (t :recs)))))
+
+      (testing "eavs->recs -> recs->eav"
+        (is (= (set (t :eavs))
+               (set (eav/recs->eavs (eav/eavs->recs (t :eavs)
+                                                    (t :rels))))))) 
+
+      (testing "recs->eav -> eavs->recs"
+        (is (= (set (t :recs))
+               (set (eav/eavs->recs (eav/recs->eavs (t :recs))
+                                    (eav/recs->rels (t :recs))))))))))
 

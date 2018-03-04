@@ -1,21 +1,24 @@
 (ns bloom.omni.eav
-  "Provides facitilities from turning nested records into EAVs and back")
+  "Provides facilities for turning records into EAVs and back.")
 
 (defn ->id [obj]
-  (obj :id))
+  (or (:id obj) 
+      (hash obj)))
 
-(defn record->eav
-  "Given a nested data structure, of maps, vectors and primitives,
-   returns a list of corresponding EAV triplets.
+(defn recs->eavs
+  "Converts vector of records to their corresponding EAVs.
+  
+  Records can be a nested data structure of maps, vectors and primitives.
 
-  All maps must include an :id.
+  If a map does not include an :id value, the resulting EAVs 
+  will have (hash {...}) as the entity-id.
 
   Ex.
   ```clojure
-  {:id 123
-   :value \"Alice\"
-   :friend {:id 345
-            :name \"Bob\"}}
+  [{:id 123
+    :value \"Alice\"
+    :friend {:id 345
+             :name \"Bob\"}}]
 
   =>
   [[123 :id 123]
@@ -24,54 +27,94 @@
    [345 :id 345]
    [345 :name \"Bob\"]]
   ```"
-  [record]
-  (cond
-    (map? record)
-    (mapcat (fn [[k v]]
-              (cond
-                (map? v)
-                (concat
-                  [[(->id record) k (->id v)]]
-                  (record->eav v))
+  [records]
+  (let [->eavs (fn ->eavs [record]
+                 (mapcat (fn [[k v]]
+                           (cond
+                             (map? v)
+                             (concat
+                               [[(->id record) k (->id v)]]
+                               (->eavs v))
 
-                (vector? v)
-                (mapcat (fn [v']
-                          (cond
-                            (map? v')
-                            (concat [[(->id record) k (->id v')]]
-                                    (record->eav v'))
-                            :else
-                            [[(->id record) k v']]))
-                        v)
+                             (vector? v)
+                             (mapcat (fn [v']
+                                       (cond
+                                         (map? v')
+                                         (concat [[(->id record) k (->id v')]]
+                                                 (->eavs v'))
+                                         :else
+                                         [[(->id record) k v']]))
+                                     v)
 
-                :else
-                [[(->id record) k v]]))
-            record)
+                             :else
+                             [[(->id record) k v]]))
+                         record))]
+    (mapcat ->eavs records)))
 
-    (vector? record)
-    (mapcat record->eav record)))
+(defn recs->rels
+  "Given a vector of records, returns the inferred relationship types for their keys."
+  [records]
+  (let [ids (set (map ->id records))
+        ->rels (fn ->rels [record]
+                 (cond 
+                   (map? record)
+                   (apply merge 
+                          (map (fn [[k v]]
+                                 (cond
+                                   (vector? v)
+                                   (cond 
+                                     (map? (first v))
+                                     {k :embed-many}
+                                     (contains? ids (first v))
+                                     {k :reference-many}
+                                     :else
+                                     {k :many})
+                                   (map? v)
+                                   {k :embed-one}
 
-(defn eav->record
-  "...
+                                   (and 
+                                     (not= v (->id record)) 
+                                     (contains? ids v))
+                                   {k :reference-one}
 
-    {:rel :many}
+                                   :else
+                                   {}))
+                               record))
 
-      [[:foo :id :foo]
-       [:foo :rel 1]
-       [:foo :rel 2]]
-       =>
-      {:id :foo
-       :rel [1 2]}
+                   (vector? record)
+                   (apply merge 
+                          (map ->rels record))))]
+    (->rels records)))
 
-    {:rel :one}
+(defn eavs->recs
+  "Converts a vector of EAVs to their corresponding records.
 
-      [[:foo :id :foo]
-       [:foo :rel 1]
-       [:foo :rel 2]]
-       =>
-      {:id :foo
-       :rel 2}  ; last one wins
-  "
+   Must also pass in a map defining the relationships on reference or multi-arity keys.
+
+   There are 6 types of relationships:
+     nil (the default)
+     For keys that point to primitive values.
+
+     :many
+     For keys that point to a vector of values.
+
+     :reference-once
+     For keys that point to a primitive value that is an id of another record.
+
+     :reference-many
+     For keys that point to a primitive values that are ids of other records.
+
+     :embed-one
+     For keys that point to another record, directly included as a child. 
+
+     :embed-many
+     For keys that point to a vector of other records, 
+     which are directly included as children.
+
+     (Embedded records will not be returned on the top-level, 
+      but they may be repeated as embedded children in other records.)
+
+  See tests for examples."
   [eavs rels]
   (let [->e (fn [[e a v]] e)
         ->a (fn [[e a v]] a)
@@ -121,11 +164,7 @@
                                          lookup
                                          fix-rels)]
 
-
                                  :reference-one
-                                 [k (last vs)]
-
-                                 :one
                                  [k (last vs)]
 
                                  ; no rels definition
@@ -134,6 +173,8 @@
     (->> (vals records-lookup)
          (map fix-rels)
          doall
+         (remove (fn [record]
+                   (nil? (record :id))))
          (remove (fn [record]
                    (contains? @ids-to-remove (record :id))))
          vec)))
