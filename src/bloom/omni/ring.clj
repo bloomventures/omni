@@ -1,4 +1,4 @@
-(ns bloom.omni.impl.router
+(ns bloom.omni.ring
   (:require
     [clout.core :as clout]))
 
@@ -49,7 +49,7 @@
                      params (clout/route-matches (route :matcher) request)]
                  (handler-fn (update request :params merge params)))))))
 
-(defn routes->handler 
+(defn ->handler 
   "Given an list of pattern - handler pairs (see example below), returns a ring handler.
 
    Given a request, the handler will return a response from the first route that: 
@@ -71,3 +71,9 @@
       (-> routes
           (filter-matching request)
           (dispatch request)))))
+
+(defn combine 
+  "Combine multiple ring handlers"
+  [& handlers]
+  (fn [request]
+    (some #(% request) handlers)))
