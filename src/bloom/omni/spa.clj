@@ -17,6 +17,8 @@
     [:html
      [:head
       [:title title]
+      [:meta {:name "viewport"
+              :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
       (let [digest (digest/from-file "public/css/styles.css")]
         [:link {:rel "stylesheet" 
                 :href (str "/css/styles.css?v=" digest) 
