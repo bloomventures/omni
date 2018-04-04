@@ -4,6 +4,7 @@
      - resource routes (server from /public/*)
      - a catch-all html file that refers app.js and styles.css with cache-busting and integrity checking"
   (:require
+    [clojure.string :as string]
     [mount.core :as mount]
     [hiccup.core :refer [html]]
     [ring.util.response :as ring.response]
@@ -32,7 +33,7 @@
                   :crossorigin "anonymous"
                   :integrity (str "sha256-" digest)}])
       [:script {:type "text/javascript"}
-       (str main ".init();")]]]))
+       (str (string/replace main #"-" "_") ".init();")]]]))
 
 (defn- add-mime-type [response path]
   (if-let [mime-type (ring.mime/ext-mime-type path)]
