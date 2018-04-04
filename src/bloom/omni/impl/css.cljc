@@ -20,33 +20,24 @@
         (str (get hash-alphabet remainder) 
              (int->base26 (dec (int (/ i (count hash-alphabet))))))))))
 
-(defn- ->class-name 
-  "Given a garden style vector, generate a unique css class-name."
+(defn- ->class-name
+  "Given a garden style vector, generate a unique css class name."
   [rules]
   (int->base26 (hash rules)))
 
-(def styles (atom {}))
+(defn ->class
+  [rules]
+  (-> rules
+      first
+      (clojure.string/replace-first "." "")))
 
-(defn- add-style! [class-name rules]
-  (swap! styles assoc class-name 
-         [(str "." class-name)
-          rules]))
-
-(defn register-style! [rules]
-  (let [class-name (->class-name rules)]
-    (add-style! class-name rules)
-    class-name))
-
-(defn compile-css [{:keys [main pretty-print?]}]
-  (reset! styles {})
-  (require (symbol main) :reload-all)
-  (garden/css 
-    {:pretty-print? pretty-print?}
-    (vals @styles)))
+(defn ->styles
+  [rules]
+  [(str "." (->class-name rules))
+   rules])
 
 #?(:clj 
-   (defn compile! [{:keys [output-to] :as css-config}]
-
-     (.mkdir (java.io.File. (.getParent (java.io.File. output-to))))
-
-     (spit output-to (compile-css css-config))))
+   (defn compile-css [{:keys [pretty-print? styles]}]
+     (garden/css 
+       {:pretty-print? pretty-print?}
+       ((var-get (find-var styles))))))
