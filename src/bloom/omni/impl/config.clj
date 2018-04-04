@@ -1,5 +1,6 @@
 (ns bloom.omni.impl.config
   (:require
+    [clojure.java.io :as io]
     [mount.core :as mount]))
 
 (def base-config
@@ -9,11 +10,23 @@
    :http-port 6123})
 
 (defn parse [path]
-  (println "Reading omni config from " path)
-  (->> path
-       slurp
-       read-string
-       (merge-with merge base-config)))
+  (if (.exists (io/file path))
+    (do
+      (println "Reading omni config from " path)
+      (->> path
+           slurp
+           read-string))
+    (println "No omni config found")))
 
 (mount/defstate config
-  :start (parse "omni.config.edn"))
+  :start (merge-with (fn [a b]
+                       (cond
+                         (map? a)
+                         (merge a b)
+                         (vector? a)
+                         (concat a b)
+                         :else
+                         b))
+                     base-config
+                     (parse "omni.config.edn")
+                     (mount/args)))
