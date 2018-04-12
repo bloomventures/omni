@@ -26,8 +26,7 @@
     (fn [{:keys [output-to styles] :as css-config}]
       (try
         (do
-          (.mkdir (java.io.File. (.getParent (java.io.File. output-to))))
-
+          (cssbuild/mkdir output-to)
           (let [output (cssbuild/compile-css css-config)
                 output-hash (hash output)]
             (when (not= output-hash @previous-output-hash)
