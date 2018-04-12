@@ -1,7 +1,6 @@
 (ns bloom.omni.impl.css
   (:require
-    [clojure.string :as string]
-    [garden.core :as garden]))
+    [clojure.string :as string]))
 
 ; css class-names allow a-z 0-9 - and _; 
 ; but, with restrictions for the first character, so, we just stick to a-z
@@ -35,9 +34,3 @@
   [rules]
   [(str "." (->class-name rules))
    rules])
-
-#?(:clj 
-   (defn compile-css [{:keys [pretty-print? styles]}]
-     (garden/css 
-       {:pretty-print? pretty-print?}
-       ((var-get (find-var styles))))))

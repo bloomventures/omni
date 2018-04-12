@@ -22,6 +22,7 @@
 
                  ; figwheel
                  [figwheel-sidecar "0.5.14"]
+                 [cljsbuild "1.1.7" :exclude [org.clojure/clojure]]
 
                  ; ajax
                  [cljs-ajax "0.7.2"]

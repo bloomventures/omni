@@ -13,6 +13,7 @@
     [mount.core :as mount]
     [bloom.omni.impl.config :refer [config]]
     [bloom.omni.impl.css :as css]
+    [bloom.omni.impl.cssbuild :as cssbuild]
     [bloom.omni.impl.async :as async]))
 
 (def previous-output-hash (atom nil))
@@ -27,9 +28,9 @@
         (do
           (.mkdir (java.io.File. (.getParent (java.io.File. output-to))))
 
-          (require (symbol (namespace styles)) :reload)
+          (require (symbol (namespace (keyword styles))) :reload)
 
-          (let [output (css/compile-css css-config)
+          (let [output (cssbuild/compile-css css-config)
                 output-hash (hash output)]
             (when (not= output-hash @previous-output-hash)
               (spit output-to output)

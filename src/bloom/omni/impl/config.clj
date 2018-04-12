@@ -16,7 +16,7 @@
       (->> path
            slurp
            read-string))
-    (println "No omni config found")))
+    (println "No omni.config.edn found; using defaults.")))
 
 (mount/defstate config
   :start (merge-with (fn [a b]
