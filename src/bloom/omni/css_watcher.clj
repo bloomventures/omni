@@ -28,8 +28,6 @@
         (do
           (.mkdir (java.io.File. (.getParent (java.io.File. output-to))))
 
-          (require (symbol (namespace (keyword styles))) :reload)
-
           (let [output (cssbuild/compile-css css-config)
                 output-hash (hash output)]
             (when (not= output-hash @previous-output-hash)

@@ -3,6 +3,7 @@
     [garden.core :as garden]))
 
 (defn compile-css [{:keys [pretty-print? styles]}]
+  (require (symbol (namespace (keyword styles))) :reload)
   (garden/css 
     {:pretty-print? pretty-print?}
     ((var-get (find-var (symbol styles))))))
