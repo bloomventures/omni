@@ -26,7 +26,11 @@
                 :media "screen" 
                 :integrity (str "sha256-" digest)}])]
      [:body
-      [:div#app]
+      [:div#app
+       [:div#message {:style "display: flex; justify-content: center; align-items: center; height: 100%"}
+        "This app requires Javascript. Please enable Javascript in your browser."]]
+      [:script {:type "text/javascript"}
+       "document.getElementById('message').outerHTML= '';"]
       (let [digest (digest/from-file "public/js/app.js")]
         [:script {:type "text/javascript"
                   :src (str "/js/app.js?v=" digest)
