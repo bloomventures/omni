@@ -1,17 +1,10 @@
 (ns bloom.omni.eav
   "Provides facilities for turning records into EAVs and back.")
 
-(defn ->id [obj]
-  (or (:id obj) 
-      (hash obj)))
-
 (defn recs->eavs
   "Converts vector of records to their corresponding EAVs.
   
   Records can be a nested data structure of maps, vectors and primitives.
-
-  If a map does not include an :id value, the resulting EAVs 
-  will have (hash {...}) as the entity-id.
 
   Ex.
   ```clojure
@@ -27,64 +20,41 @@
    [345 :id 345]
    [345 :name \"Bob\"]]
   ```"
-  [records]
-  (let [->eavs (fn ->eavs [record]
+  [->id records schema]
+  (let [id->r (->> records
+                   (reduce (fn [memo r]
+                             (assoc memo (:id r) r)) {}))
+        ->eavs (fn ->eavs [record]
                  (mapcat (fn [[k v]]
-                           (cond
-                             (map? v)
+                           (case (schema k)
+                             :reference-many
+                             (mapcat (fn [v']
+                                       [[(->id record) k (->id (id->r v'))]])
+                                     v)
+
+                             :reference-one
+                             [[(->id record) k (->id (id->r v))]]
+
+                             :embed-many
+                             (mapcat (fn [v']
+                                       (concat [[(->id record) k (->id v')]]
+                                               (->eavs v')))
+                                     v)
+
+                             :embed-one
                              (concat
                                [[(->id record) k (->id v)]]
                                (->eavs v))
 
-                             (vector? v)
+                             :many
                              (mapcat (fn [v']
-                                       (cond
-                                         (map? v')
-                                         (concat [[(->id record) k (->id v')]]
-                                                 (->eavs v'))
-                                         :else
-                                         [[(->id record) k v']]))
+                                       [[(->id record) k v']])
                                      v)
 
-                             :else
+                             ; else
                              [[(->id record) k v]]))
                          record))]
     (mapcat ->eavs records)))
-
-(defn recs->rels
-  "Given a vector of records, returns the inferred relationship types for their keys."
-  [records]
-  (let [ids (set (map ->id records))
-        ->rels (fn ->rels [record]
-                 (cond 
-                   (map? record)
-                   (apply merge 
-                          (map (fn [[k v]]
-                                 (cond
-                                   (vector? v)
-                                   (cond 
-                                     (map? (first v))
-                                     {k :embed-many}
-                                     (contains? ids (first v))
-                                     {k :reference-many}
-                                     :else
-                                     {k :many})
-                                   (map? v)
-                                   {k :embed-one}
-
-                                   (and 
-                                     (not= v (->id record)) 
-                                     (contains? ids v))
-                                   {k :reference-one}
-
-                                   :else
-                                   {}))
-                               record))
-
-                   (vector? record)
-                   (apply merge 
-                          (map ->rels record))))]
-    (->rels records)))
 
 (defn eavs->recs
   "Converts a vector of EAVs to their corresponding records.
@@ -115,20 +85,20 @@
       but they may be repeated as embedded children in other records.)
 
   See tests for examples."
-  [eavs rels]
+  [->id eavs schema]
   (let [->e (fn [[e a v]] e)
         ->a (fn [[e a v]] a)
         ->v (fn [[e a v]] v)
         ; records-lookup are eavs converted as follows:
-        ; [123 :id 123]
-        ; [123 :value :a]
-        ; [999 :id 999]
-        ; [999 :value :b]
+        ; [e123 :id 123]
+        ; [e123 :value :a]
+        ; [e999 :id 999]
+        ; [e999 :value :b]
         ; =>
-        ; {123 {:id [123]
-        ;       :value [:a]}
-        ;  999 {:id [999]
-        ;       :value [:b]}}
+        ; {e123 {:id [123]
+        ;        :value [:a]}
+        ;  e999 {:id [999]
+        ;        :value [:b]}}
         records-lookup (->> eavs
                             (group-by ->e)
                             (mapv (fn [[e eavs]]
@@ -145,7 +115,7 @@
         fix-rels (fn fix-rels [record]
                    (->> record
                         (map (fn [[k vs]]
-                               (case (rels k)
+                               (case (schema k)
 
                                  :embed-many
                                  [k (->> vs
@@ -153,7 +123,12 @@
                                          (mapv fix-rels))]
 
                                  :reference-many
-                                 [k vs]
+                                 [k (->> vs
+                                         (mapv (fn [eid]
+                                                 (-> eid
+                                                     records-lookup
+                                                     :id
+                                                     first))))]
 
                                  :many
                                  [k vs]
@@ -165,9 +140,13 @@
                                          fix-rels)]
 
                                  :reference-one
-                                 [k (last vs)]
+                                 [k (-> vs
+                                        last 
+                                        records-lookup
+                                        :id
+                                        first)]
 
-                                 ; no rels definition
+                                 ; no schema definition
                                  [k (last vs)])))
                         (into {})))]
     (->> (vals records-lookup)
@@ -176,5 +155,5 @@
          (remove (fn [record]
                    (nil? (record :id))))
          (remove (fn [record]
-                   (contains? @ids-to-remove (record :id))))
+                   (contains? @ids-to-remove (->id record))))
          vec)))

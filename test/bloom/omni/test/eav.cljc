@@ -3,33 +3,37 @@
     [clojure.test :refer :all]
     [bloom.omni.eav :as eav]))
 
+(defn ->id [obj]
+  (str "_" (or (obj :id) (obj :name))))
+
 (def tests
   [{:id "single rec, no rels"
     :recs [{:id "foo"
             :value "bar"}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :value "bar"]]
-    :rels {}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :value "bar"]]
+    :schema {:id :id}}
 
    {:id "multiple recs, no rels"
     :recs [{:id "foo"
             :value "bar"}
            {:id "abc"
             :value "xyz"}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :value "bar"]
-           ["abc" :id "abc"]
-           ["abc" :value "xyz"]]
-    :rels {}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :value "bar"]
+           ["_abc" :id "abc"]
+           ["_abc" :value "xyz"]]
+    :schema {:id :id}}
 
    {:id "rels: many"
     :recs [{:id "foo"
             :rel ["a" "b" "c"]}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :rel "a"]
-           ["foo" :rel "b"]
-           ["foo" :rel "c"]]
-    :rels {:rel :many}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :rel "a"]
+           ["_foo" :rel "b"]
+           ["_foo" :rel "c"]]
+    :schema {:id :id
+             :rel :many}}
 
    {:id "rels: embed-many"
     :recs [{:id "foo"
@@ -37,14 +41,15 @@
                    :value 0}
                   {:id "b"
                    :value 1}]}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :rel "a"]
-           ["a" :id "a"]
-           ["a" :value 0]
-           ["foo" :rel "b"]
-           ["b" :id "b"]
-           ["b" :value 1]]
-    :rels {:rel :embed-many}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :rel "_a"]
+           ["_a" :id "a"]
+           ["_a" :value 0]
+           ["_foo" :rel "_b"]
+           ["_b" :id "b"]
+           ["_b" :value 1]]
+    :schema {:id :id
+             :rel :embed-many}}
 
    {:id "rels: reference-many"
     :recs [{:id "foo"
@@ -53,48 +58,52 @@
             :value 0}
            {:id "b"
             :value 1}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :rel "a"]
-           ["a" :id "a"]
-           ["a" :value 0]
-           ["foo" :rel "b"]
-           ["b" :id "b"]
-           ["b" :value 1]]
-    :rels {:rel :reference-many}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :rel "_a"]
+           ["_a" :id "a"]
+           ["_a" :value 0]
+           ["_foo" :rel "_b"]
+           ["_b" :id "b"]
+           ["_b" :value 1]]
+    :schema {:id :id
+             :rel :reference-many}}
 
    {:id "rels: embed-one"
     :recs [{:id "foo"
             :rel {:id "abc"
                   :value "xyz"}}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :rel "abc"]
-           ["abc" :id "abc"]
-           ["abc" :value "xyz"]]
-    :rels {:rel :embed-one}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :rel "_abc"]
+           ["_abc" :id "abc"]
+           ["_abc" :value "xyz"]]
+    :schema {:id :id
+             :rel :embed-one}}
 
    {:id "rels: reference-one"
     :recs [{:id "foo"
             :rel "abc"}
            {:id "abc"
             :value "xyz"}]
-    :eavs [["foo" :id "foo"]
-           ["foo" :rel "abc"]
-           ["abc" :id "abc"]
-           ["abc" :value "xyz"]]
-    :rels {:rel :reference-one}}
+    :eavs [["_foo" :id "foo"]
+           ["_foo" :rel "_abc"]
+           ["_abc" :id "abc"]
+           ["_abc" :value "xyz"]]
+    :schema {:id :id
+             :rel :reference-one}}
 
    {:id "rels: embed-many nested one level"
     :recs [{:id "a"
             :rel [{:id "b"
                    :rel [{:id "c"
                           :value 1}]}]}]
-    :eavs [["a" :id "a"]
-           ["a" :rel "b"]
-           ["b" :id "b"]
-           ["b" :rel "c"]
-           ["c" :id "c"]
-           ["c" :value 1]]
-    :rels {:rel :embed-many}}
+    :eavs [["_a" :id "a"]
+           ["_a" :rel "_b"]
+           ["_b" :id "b"]
+           ["_b" :rel "_c"]
+           ["_c" :id "c"]
+           ["_c" :value 1]]
+    :schema {:id :id
+             :rel :embed-many}}
 
    {:id "rels: embed-many nested two levels"
     :recs [{:id "a"
@@ -119,48 +128,49 @@
                           :value 7}
                          {:id "bbb"
                           :value 8}]}]}]
-    :eavs [["a" :id "a"]
-           ["b" :id "b"]
-           ["aa" :id "aa"]
-           ["ab" :id "ab"]
-           ["ba" :id "ba"]
-           ["bb" :id "bb"]
-           ["aaa" :id "aaa"]
-           ["aab" :id "aab"]
-           ["aba" :id "aba"]
-           ["abb" :id "abb"]
-           ["baa" :id "baa"]
-           ["bab" :id "bab"]
-           ["bba" :id "bba"]
-           ["bbb" :id "bbb"]
-           ["aaa" :value 1]
-           ["aab" :value 2]
-           ["aba" :value 3]
-           ["abb" :value 4]
-           ["baa" :value 5]
-           ["bab" :value 6]
-           ["bba" :value 7]
-           ["bbb" :value 8]
-           ["a" :rel "aa"]
-           ["aa" :rel "aaa"]
-           ["aa" :rel "aab"]
-           ["a" :rel "ab"]
-           ["ab" :rel "aba"]
-           ["ab" :rel "abb"]
-           ["b" :rel "ba"]
-           ["ba" :rel "baa"]
-           ["ba" :rel "bab"]
-           ["b" :rel "bb"]
-           ["bb" :rel "bba"]
-           ["bb" :rel "bbb"]]
-    :rels {:rel :embed-many}}
+    :eavs [["_a" :id "a"]
+           ["_b" :id "b"]
+           ["_aa" :id "aa"]
+           ["_ab" :id "ab"]
+           ["_ba" :id "ba"]
+           ["_bb" :id "bb"]
+           ["_aaa" :id "aaa"]
+           ["_aab" :id "aab"]
+           ["_aba" :id "aba"]
+           ["_abb" :id "abb"]
+           ["_baa" :id "baa"]
+           ["_bab" :id "bab"]
+           ["_bba" :id "bba"]
+           ["_bbb" :id "bbb"]
+           ["_aaa" :value 1]
+           ["_aab" :value 2]
+           ["_aba" :value 3]
+           ["_abb" :value 4]
+           ["_baa" :value 5]
+           ["_bab" :value 6]
+           ["_bba" :value 7]
+           ["_bbb" :value 8]
+           ["_a" :rel "_aa"]
+           ["_aa" :rel "_aaa"]
+           ["_aa" :rel "_aab"]
+           ["_a" :rel "_ab"]
+           ["_ab" :rel "_aba"]
+           ["_ab" :rel "_abb"]
+           ["_b" :rel "_ba"]
+           ["_ba" :rel "_baa"]
+           ["_ba" :rel "_bab"]
+           ["_b" :rel "_bb"]
+           ["_bb" :rel "_bba"]
+           ["_bb" :rel "_bbb"]]
+    :schema {:id :id
+             :rel :embed-many}}
    
    {:id "comprehensive, multi-rels"
     :recs [{:id :a
             :name "Alice"
             :emails ["alice@example.com"
                      "a@example.com"]
-            :friend-ids [:b :c :d]
+            :friend-ids [:b :d]
             :best-friend-id :b
             :location {:id :toronto
                        :city "Toronto"
@@ -183,71 +193,73 @@
            {:id :d
             :name "Donald"}]
     :eavs [; a
-           [:a :id :a]
-           [:a :name "Alice"]
-           [:a :emails "alice@example.com"]
-           [:a :emails "a@example.com"]
-           [:a :friend-ids :b]
-           [:a :friend-ids :c]
-           [:a :friend-ids :d]
-           [:a :best-friend-id :b]
-           [:a :location :toronto]
-           [:toronto :id :toronto]
-           [:toronto :city "Toronto"]
-           [:toronto :country "Canada"]
-           [:a :pets -1611178140]
-           [-1611178140 :name "Doggo"]
-           [-1611178140 :type :dog]
-           [:a :pets 657552642]
-           [657552642 :name "Woofles"]
-           [657552642 :type :dog]
+           ["_:a" :id :a]
+           ["_:a" :name "Alice"]
+           ["_:a" :emails "alice@example.com"]
+           ["_:a" :emails "a@example.com"]
+           ["_:a" :friend-ids "_:b"]
+           ["_:a" :friend-ids "_:d"]
+           ["_:a" :best-friend-id "_:b"]
+           ["_:a" :location "_:toronto"]
+           ["_:toronto" :id :toronto]
+           ["_:toronto" :city "Toronto"]
+           ["_:toronto" :country "Canada"]
+           ["_:a" :pets "_Doggo"]
+           ["_Doggo" :name "Doggo"]
+           ["_Doggo" :type :dog]
+           ["_:a" :pets "_Woofles"]
+           ["_Woofles" :name "Woofles"]
+           ["_Woofles" :type :dog]
            ; b
-           [:b :id :b]
-           [:b :name "Bob"]
-           [:b :emails "bob@example.com"]
-           [:b :friend-ids :a]
-           [:b :pets 579057835]
-           [579057835 :name "Meowsers"]
-           [579057835 :type :cat]
+           ["_:b" :id :b]
+           ["_:b" :name "Bob"]
+           ["_:b" :emails "bob@example.com"]
+           ["_:b" :friend-ids "_:a"]
+           ["_:b" :pets "_Meowsers"]
+           ["_Meowsers" :name "Meowsers"]
+           ["_Meowsers" :type :cat]
            ; c
            #_[:c :id :c]
            #_[:c :name "Cathy"]
            ; d
-           [:d :id :d]
-           [:d :name "Donald"]]
-    :rels {:emails :many
-           :friend-ids :reference-many
-           :best-friend-id :reference-one
-           :location :embed-one
-           :pets :embed-many}}])
+           ["_:d" :id :d]
+           ["_:d" :name "Donald"]]
+    :schema {:id :id
+             :name :id
+             :emails :many
+             :friend-ids :reference-many
+             :best-friend-id :reference-one
+             :location :embed-one
+             :pets :embed-many}}])
 
 (deftest all
-  (doseq [t tests]
+  (doseq [t (take 9 tests)]
     (testing (str "test " (t :id))
 
       (testing "eavs->recs"
         (is (= (set (t :recs)) 
                (set (eav/eavs->recs
+                      ->id
                       (t :eavs)
-                      (t :rels))))))
+                      (t :schema))))))
 
       (testing "recs->eav"
-        (is (= (set (t :eavs)) 
-               (set (eav/recs->eavs
-                      (t :recs))))))
+          (is (= (set (t :eavs)) 
+                 (set (eav/recs->eavs ->id
+                                      (t :recs)
+                                      (t :schema))))))
 
-      (testing "recs->rels"
-        (is (= (t :rels) 
-               (eav/recs->rels
-                 (t :recs)))))
-
+      
       (testing "eavs->recs -> recs->eav"
-        (is (= (set (t :eavs))
-               (set (eav/recs->eavs (eav/eavs->recs (t :eavs)
-                                                    (t :rels))))))) 
+          (is (= (set (t :eavs))
+                 (set (eav/recs->eavs ->id 
+                                      (eav/eavs->recs ->id
+                                                      (t :eavs)
+                                                      (t :schema))
+                                      (t :schema)))))) 
 
       (testing "recs->eav -> eavs->recs"
-        (is (= (set (t :recs))
-               (set (eav/eavs->recs (eav/recs->eavs (t :recs))
-                                    (eav/recs->rels (t :recs))))))))))
-
+          (is (= (set (t :recs))
+                 (set (eav/eavs->recs ->id
+                                      (eav/recs->eavs ->id (t :recs) (t :schema))
+                                      (t :schema)))))))))
