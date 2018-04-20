@@ -3,7 +3,7 @@
     [clojure.test :refer :all]
     [bloom.omni.eav :as eav]))
 
-(defn ->id [obj]
+(defn ->eid [obj]
   (str "_" (or (obj :id) 
                (obj :person/id) 
                (obj :location/id) 
@@ -243,30 +243,30 @@
       (testing "eavs->recs"
         (is (= (set (t :recs)) 
                (set (eav/eavs->recs
-                      ->id
+                      ->eid
                       (t :schema)
                       (t :eavs))))))
 
       (testing "recs->eav"
           (is (= (set (t :eavs)) 
-                 (set (eav/recs->eavs ->id
+                 (set (eav/recs->eavs ->eid
                                       (t :schema)
                                       (t :recs))))))
 
       
       (testing "eavs->recs -> recs->eav"
         (is (= (set (t :eavs))
-               (set (eav/recs->eavs ->id 
+               (set (eav/recs->eavs ->eid 
                                     (t :schema)
-                                    (eav/eavs->recs ->id
+                                    (eav/eavs->recs ->eid
                                                     (t :schema)
                                                     (t :eavs))))))) 
 
       (testing "recs->eav -> eavs->recs"
         (is (= (set (t :recs))
-               (set (eav/eavs->recs ->id
+               (set (eav/eavs->recs ->eid
                                     (t :schema)
-                                    (eav/recs->eavs ->id (t :schema) (t :recs))))))))))
+                                    (eav/recs->eavs ->eid (t :schema) (t :recs))))))))))
 
 
 (deftest namespace-keys
