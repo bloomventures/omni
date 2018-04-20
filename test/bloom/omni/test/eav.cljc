@@ -244,29 +244,29 @@
         (is (= (set (t :recs)) 
                (set (eav/eavs->recs
                       ->id
-                      (t :eavs)
-                      (t :schema))))))
+                      (t :schema)
+                      (t :eavs))))))
 
       (testing "recs->eav"
           (is (= (set (t :eavs)) 
                  (set (eav/recs->eavs ->id
-                                      (t :recs)
-                                      (t :schema))))))
+                                      (t :schema)
+                                      (t :recs))))))
 
       
       (testing "eavs->recs -> recs->eav"
         (is (= (set (t :eavs))
                (set (eav/recs->eavs ->id 
+                                    (t :schema)
                                     (eav/eavs->recs ->id
-                                                    (t :eavs)
-                                                    (t :schema))
-                                    (t :schema)))))) 
+                                                    (t :schema)
+                                                    (t :eavs))))))) 
 
       (testing "recs->eav -> eavs->recs"
         (is (= (set (t :recs))
                (set (eav/eavs->recs ->id
-                                    (eav/recs->eavs ->id (t :recs) (t :schema))
-                                    (t :schema)))))))))
+                                    (t :schema)
+                                    (eav/recs->eavs ->id (t :schema) (t :recs))))))))))
 
 
 (deftest namespace-keys

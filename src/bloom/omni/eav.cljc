@@ -33,7 +33,7 @@
    [345 :id 345]
    [345 :name \"Bob\"]]
   ```"
-  [->eid records schema]
+  [->eid schema records]
   (let [->id (make->id schema)
         id->r (->> records
                    (reduce (fn [memo r]
@@ -99,7 +99,7 @@
       but they may be repeated as embedded children in other records.)
 
   See tests for examples."
-  [->eid eavs schema]
+  [->eid schema eavs]
   (let [->e (fn [[e a v]] e)
         ->a (fn [[e a v]] a)
         ->v (fn [[e a v]] v)
