@@ -267,3 +267,40 @@
                (set (eav/eavs->recs ->id
                                     (eav/recs->eavs ->id (t :recs) (t :schema))
                                     (t :schema)))))))))
+
+
+(deftest namespace-keys
+  (testing "namespace-keys"
+
+    (is (= {:ns/foo 1
+            :ns/bar 2}
+           (eav/namespace-keys (fn [_]
+                                 :ns)
+                               {:foo 1
+                                :bar 2})))
+    
+    (is (= [{:ns/foo 1
+             :ns/bar 2}
+            {:ns/foo 3
+             :ns/bar 4}]
+           (eav/namespace-keys (fn [_]
+                                 :ns)
+                               [{:foo 1
+                                 :bar 2}
+                                {:foo 3
+                                 :bar 4}])))
+    
+    (is (= [{:person/name "Alice"
+             :person/type :person
+             :person/pets [{:pet/name "Meowsers"
+                            :pet/type :pet}]}
+            {:person/name "Bob"
+             :person/type :person}]
+           (eav/namespace-keys (fn [r]
+                                 (r :type))
+                               [{:name "Alice"
+                                 :type :person
+                                 :pets [{:name "Meowsers"
+                                         :type :pet}]}
+                                {:name "Bob"
+                                 :type :person}])))))

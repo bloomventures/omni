@@ -172,3 +172,22 @@
          (remove (fn [record]
                    (contains? @ids-to-remove (->eid record))))
          vec)))
+
+(defn namespace-keys 
+  "Given a list of nested records, adds namespace to all map keys using given function"
+  [r->ns r]
+  (cond
+    (vector? r)
+    (->> r
+         (map (partial namespace-keys r->ns)))
+
+    (map? r)
+    (->> r
+         (map (fn [[k v]]
+                [(keyword (name (r->ns r)) 
+                          (name k)) 
+                 (namespace-keys r->ns v)]))
+         (into {}))
+
+    :else
+    r))
