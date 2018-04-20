@@ -1,6 +1,19 @@
 (ns bloom.omni.eav
   "Provides facilities for turning records into EAVs and back.")
 
+(defn- make->id [schema]
+  (let [id-keys (->> schema
+                     (filter (fn [[k v]]
+                               (= v :id)))
+                     (map first)
+                     set)]
+    (fn [r]
+      (->> id-keys
+           (map (fn [k]
+                  (r k)))
+           (remove nil?)
+           first))))
+
 (defn recs->eavs
   "Converts vector of records to their corresponding EAVs.
   
@@ -20,39 +33,40 @@
    [345 :id 345]
    [345 :name \"Bob\"]]
   ```"
-  [->id records schema]
-  (let [id->r (->> records
+  [->eid records schema]
+  (let [->id (make->id schema)
+        id->r (->> records
                    (reduce (fn [memo r]
-                             (assoc memo (:id r) r)) {}))
+                             (assoc memo (->id r) r)) {}))
         ->eavs (fn ->eavs [record]
                  (mapcat (fn [[k v]]
                            (case (schema k)
                              :reference-many
                              (mapcat (fn [v']
-                                       [[(->id record) k (->id (id->r v'))]])
+                                       [[(->eid record) k (->eid (id->r v'))]])
                                      v)
 
                              :reference-one
-                             [[(->id record) k (->id (id->r v))]]
+                             [[(->eid record) k (->eid (id->r v))]]
 
                              :embed-many
                              (mapcat (fn [v']
-                                       (concat [[(->id record) k (->id v')]]
+                                       (concat [[(->eid record) k (->eid v')]]
                                                (->eavs v')))
                                      v)
 
                              :embed-one
                              (concat
-                               [[(->id record) k (->id v)]]
+                               [[(->eid record) k (->eid v)]]
                                (->eavs v))
 
                              :many
                              (mapcat (fn [v']
-                                       [[(->id record) k v']])
+                                       [[(->eid record) k v']])
                                      v)
 
                              ; else
-                             [[(->id record) k v]]))
+                             [[(->eid record) k v]]))
                          record))]
     (mapcat ->eavs records)))
 
@@ -85,7 +99,7 @@
       but they may be repeated as embedded children in other records.)
 
   See tests for examples."
-  [->id eavs schema]
+  [->eid eavs schema]
   (let [->e (fn [[e a v]] e)
         ->a (fn [[e a v]] a)
         ->v (fn [[e a v]] v)
@@ -108,6 +122,7 @@
                                                    [a (mapv ->v eavs)]))
                                             (into {}))]))
                             (into {}))
+        ->id (make->id schema)
         ids-to-remove (atom #{})
         lookup (fn [id]
                  (swap! ids-to-remove conj id)
@@ -127,7 +142,7 @@
                                          (mapv (fn [eid]
                                                  (-> eid
                                                      records-lookup
-                                                     :id
+                                                     ->id
                                                      first))))]
 
                                  :many
@@ -143,7 +158,7 @@
                                  [k (-> vs
                                         last 
                                         records-lookup
-                                        :id
+                                        ->id
                                         first)]
 
                                  ; no schema definition
@@ -153,7 +168,7 @@
          (map fix-rels)
          doall
          (remove (fn [record]
-                   (nil? (record :id))))
+                   (nil? (->id record))))
          (remove (fn [record]
-                   (contains? @ids-to-remove (->id record))))
+                   (contains? @ids-to-remove (->eid record))))
          vec)))
