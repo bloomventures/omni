@@ -1,4 +1,4 @@
-(defproject io.bloomventures/omni "0.10.1"
+(defproject io.bloomventures/omni "0.10.2"
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
                  [mount "0.1.12"]
