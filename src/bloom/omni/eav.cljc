@@ -179,7 +179,7 @@
   (cond
     (vector? r)
     (->> r
-         (map (partial namespace-keys r->ns)))
+         (mapv (partial namespace-keys r->ns)))
 
     (map? r)
     (->> r
