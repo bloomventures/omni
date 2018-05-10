@@ -1,7 +1,6 @@
 (ns bloom.omni.impl.config
   (:require
-    [clojure.java.io :as io]
-    [mount.core :as mount]))
+    [clojure.java.io :as io]))
 
 (def base-config
   {:title "Omni App"
@@ -9,7 +8,7 @@
    :figwheel-port 5123
    :http-port 6123})
 
-(defn parse [path]
+(defn- parse [path]
   (if (.exists (io/file path))
     (do
       (println "Reading omni config from " path)
@@ -18,15 +17,15 @@
            read-string))
     (println "No omni.config.edn found; using defaults.")))
 
-(mount/defstate config
-  :start (merge-with (fn [a b]
-                       (cond
-                         (map? a)
-                         (merge a b)
-                         (vector? a)
-                         (concat a b)
-                         :else
-                         b))
-                     base-config
-                     (parse "omni.config.edn")
-                     (mount/args)))
+(defn fill [config]
+  (merge-with (fn [a b]
+                (cond
+                  (map? a)
+                  (merge a b)
+                  (vector? a)
+                  (concat a b)
+                  :else
+                  b))
+              base-config
+              (parse "omni.config.edn")
+              config))

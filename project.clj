@@ -1,7 +1,6 @@
-(defproject io.bloomventures/omni "0.10.2"
+(defproject io.bloomventures/omni "0.11.0"
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
-                 [mount "0.1.12"]
 
                  ; spa
                  [hiccup "1.0.5"]
@@ -33,6 +32,10 @@
 
                  ; impl.digest
                  [commons-codec "1.10"]
+
+                 ; ring
+                 [ring-middleware-format "0.7.2"]
+                 [ring/ring-defaults "0.3.1"]
                  
                  ; router
                  [clout "2.1.2"]])

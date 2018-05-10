@@ -13,17 +13,29 @@ lein install
 
 Then, in your project:
 
-(1) Include the following dependency in your `project.clj`:
+(1) Add the following to your `project.clj`:
 
 ```clojure
-[bloom/omni "0.2.0"]
+:dependencies [[io.bloomventures/omni "0.11.0"]]
+
+:plugins [[io.bloomventures/omni "0.11.0"]] ; for "omni compile" task
+
+:omni-config path.to/config
+
+:profiles {:uberjar {:aot :all
+                     :prep-tasks [["omni" "compile"]
+                                 "compile"]}}
 ```
 
-(2) Create an `omni.config.edn` file in the project's root directory:
+(2) Create an `omni.config.edn` file in the project's root directory, or, somewhere in your app:
 
 ```clojure
-{:cljs {:main "myapp.core"}
- :css {:main "myapp.styles.core}
+{:title "New App"
+ :css {:styles "path.to/styles"}
+ :cljs {:main "path.to.cljs.core"}
+ :routes [...]
+ :figwheel-port 1234
+ :http-port 1111}
 ```
 
 ## Developing Omni

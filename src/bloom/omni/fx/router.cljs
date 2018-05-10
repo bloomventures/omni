@@ -1,4 +1,4 @@
-(ns bloom.omni.router
+(ns bloom.omni.fx.router
   "Wrapper for (secretary + accountant + re-frame)-based client-side routing.
 
   Provides the `defroute` macro for registering routes and an fx for re-frame.
@@ -18,7 +18,7 @@
   ; require-macros here makes it possible for cljs consumers
   ; of this namespace to just do a regular require
   (:require-macros
-    [bloom.omni.router :refer [defroute]]))
+    [bloom.omni.fx.router :refer [defroute]]))
 
 (defn- navigate! [path]
   (accountant/navigate! path))

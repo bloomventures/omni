@@ -1,17 +1,15 @@
 (ns bloom.omni.css-watcher
-  "Provides a mount component that watches the src directory for changes to cljc files and compiles garden to css. 
+  "Provides a component that watches the src directory for changes to cljc files and compiles garden to css. 
 
   Requires `{:css {:main \"...\"}}` to be set in `omni.config.edn`
   
   ```clojure
   (require '[bloom.omni.css-watcher :as css-watcher])
-  (mount/start #'css-watcher/component)
+  (css-watcher/start!)
   ```"
   (:require
     [clojure.string :as string]
     [hawk.core :as hawk]
-    [mount.core :as mount]
-    [bloom.omni.impl.config :refer [config]]
     [bloom.omni.impl.css :as css]
     [bloom.omni.impl.cssbuild :as cssbuild]
     [bloom.omni.impl.async :as async]))
@@ -37,11 +35,11 @@
           (println e))))
     50))
 
-(defn- stop-watcher! [watcher]
+(defn stop! [watcher]
   (println "Stopping CSS watcher...")
   (hawk/stop! watcher))
 
-(defn- start-watcher! [css-config]
+(defn start! [css-config]
   (println "Starting CSS watcher...")
   (reset! previous-output-hash nil)
   (let [css-config (merge css-config
@@ -57,7 +55,3 @@
                              (string/ends-with? (.getName file) "cljc"))
                        (compile! css-config))
                      nil)}])))
-
-(mount/defstate component
-  :start (start-watcher! (config :css))
-  :stop (stop-watcher! component))

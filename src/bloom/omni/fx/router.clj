@@ -1,4 +1,4 @@
-(ns bloom.omni.router
+(ns bloom.omni.fx.router
   (:require
     [secretary.core :as secretary]))
 

@@ -1,4 +1,4 @@
-(ns bloom.omni.dispatch-debounce
+(ns bloom.omni.fx.dispatch-debounce
   (:require
     [re-frame.router :as router]
     [re-frame.core :refer [reg-fx]]

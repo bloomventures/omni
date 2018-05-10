@@ -1,13 +1,16 @@
 (ns bloom.omni.compile
   (:require
-    [mount.core :as mount]
     [bloom.omni.impl.cljsbuild :as cljsbuild]
     [bloom.omni.impl.cssbuild :as cssbuild]
     [bloom.omni.impl.builds :refer [builds]]
-    [bloom.omni.impl.config :refer [config]]))
+    [bloom.omni.impl.config :as config]))
 
-(mount/defstate compile-css! 
-  :start (cssbuild/compile! (:css config)))
+(defn compile-css! [c]
+  (cssbuild/compile! (:css (config/fill c))))
     
-(mount/defstate compile-js! 
-  :start (cljsbuild/compile! (last builds)))
+(defn compile-js! [c]
+  (cljsbuild/compile! (last (builds (config/fill c)))))
+
+(defn compile! [c]
+  (compile-css! c)
+  (compile-js! c))

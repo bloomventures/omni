@@ -1,4 +1,4 @@
-(ns bloom.omni.ajax
+(ns bloom.omni.fx.ajax
   "Provides a re-frame fx for making ajax calls with transit encoding."
   (:require
     [ajax.core :as ajax]

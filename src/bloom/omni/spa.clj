@@ -5,14 +5,12 @@
      - a catch-all html file that refers app.js and styles.css with cache-busting and integrity checking"
   (:require
     [clojure.string :as string]
-    [mount.core :as mount]
     [hiccup.core :refer [html]]
     [ring.util.response :as ring.response]
     [ring.util.mime-type :as ring.mime]
-    [bloom.omni.impl.digest :as digest]
-    [bloom.omni.impl.config :refer [config]]))
+    [bloom.omni.impl.digest :as digest]))
 
-(defn- index-page []
+(defn- index-page [config]
   (let [title (get-in config [:title])
         main (get-in config [:cljs :main])]
     [:html
@@ -49,20 +47,20 @@
     (ring.response/resource-response path)
     (add-mime-type path)))
 
-(def routes 
-  [[:get "/js/app.js"] 
-   (fn [_]
-     (some-> (resource-response "public/js/app.js")
-             (assoc-in 
-               [:headers "Cache-Control"] 
-               "max-age=365000000, immutable")))
+(defn routes [config]
+  [[[:get "/js/app.js"] 
+    (fn [_]
+      (some-> (resource-response "public/js/app.js")
+              (assoc-in 
+                [:headers "Cache-Control"] 
+                "max-age=365000000, immutable")))]
 
-   [:get "/*"]
-   (fn [r]
-     (resource-response (str "public/" (-> r :params :*))))
+   [[:get "/*"]
+    (fn [r]
+      (resource-response (str "public/" (-> r :params :*))))]
 
-   [:get "/*"]
-   (fn [_]
-     {:status 200
-      :headers {"Content-Type" "text/html; charset=utf-8"}
-      :body (html (index-page))})])
+   [[:get "/*"]
+    (fn [_]
+      {:status 200
+       :headers {"Content-Type" "text/html; charset=utf-8"}
+       :body (html (index-page config))})]])
