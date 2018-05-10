@@ -30,15 +30,19 @@
            (figwheel/stop!))})
 
 (def system
-  {:deps [figwheel
-          css-watcher
-          http-server]})
+  {:deps (fn [config] 
+           (if (= "prod" (config :environment))
+             [http-server]
+             [figwheel
+              css-watcher
+              http-server]))})
 
 (defonce state (atom []))
 
 (defn- -start! [component config]
-  (doseq [s (component :deps)]
-    (-start! s config))    
+  (when (component :deps)
+    (doseq [s ((component :deps) config)]
+      (-start! s config)))    
   (swap! state conj {:component component
                      :value (when (component :start)
                               ((component :start) config))}))
