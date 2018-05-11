@@ -2,40 +2,21 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
 
-                 ; spa
-                 [hiccup "1.0.5"]
-                 [ring/ring-core "1.6.3"]
+                 [com.cognitect/transit-cljs "0.8.243"] ; fx.ajax
+                 [cljsbuild "1.1.7" :exclude [org.clojure/clojure]] ; figwheel
+                 [cljs-ajax "0.7.2"] ; fx.ajax
+                 [clout "2.1.2"] ; clj-router
+                 [commons-codec "1.10"] ; impl.digest
+                 [figwheel-sidecar "0.5.14"] ; figwheel
+                 [garden "1.3.4"] ; impl.cssbuild
+                 [hawk "0.2.11"] ; css-watcher
+                 [hiccup "1.0.5"] ; spa, auth.google
+                 [http-kit "2.2.0"] ; http-server
+                 [org.clojure/core.async "0.4.474"] ; impl.async
+                 [ring/ring-core "1.6.3"] ; spa
+                 [ring/ring-defaults "0.3.1"] ; ring
+                 [ring-middleware-format "0.7.2"] ; ring
+                 [secretary "1.2.3"] ; fx.router
+                 [venantius/accountant "0.2.4"] ; fx.router
 
-                 ; css-watcher
-                 [hawk "0.2.11"]
-
-                 ; css
-                 [garden "1.3.4"]
-
-                 ; http-server
-                 [http-kit "2.2.0"]
-
-                 ; router
-                 [secretary "1.2.3"] 
-                 [venantius/accountant "0.2.4"]
-
-                 ; figwheel
-                 [figwheel-sidecar "0.5.14"]
-                 [cljsbuild "1.1.7" :exclude [org.clojure/clojure]]
-
-                 ; ajax
-                 [cljs-ajax "0.7.2"]
-                 [com.cognitect/transit-cljs "0.8.243"]
-
-                 ; impl.async
-                 [org.clojure/core.async "0.4.474"]
-
-                 ; impl.digest
-                 [commons-codec "1.10"]
-
-                 ; ring
-                 [ring-middleware-format "0.7.2"]
-                 [ring/ring-defaults "0.3.1"]
-                 
-                 ; router
-                 [clout "2.1.2"]])
+                 ])
