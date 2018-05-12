@@ -1,4 +1,4 @@
-(ns bloom.omni.ring
+(ns bloom.omni.impl.middleware
   (:require
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.defaults :refer [wrap-defaults

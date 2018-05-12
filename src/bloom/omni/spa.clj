@@ -4,6 +4,7 @@
      - resource routes (server from /public/*)
      - a catch-all html file that refers app.js and styles.css with cache-busting and integrity checking"
   (:require
+    [clojure.java.io :as io]
     [clojure.string :as string]
     [hiccup.core :refer [html]]
     [ring.util.response :as ring.response]
@@ -11,31 +12,32 @@
     [bloom.omni.impl.digest :as digest]))
 
 (defn- index-page [config]
-  (let [title (get-in config [:title])
-        main (get-in config [:cljs :main])]
-    [:html
-     [:head
-      [:title title]
-      [:meta {:name "viewport"
-              :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
-      (let [digest (digest/from-file "public/css/styles.css")]
+  [:html
+   [:head
+    (when-let [title (get-in config [:omni/title])]
+      [:title title])
+    [:meta {:name "viewport"
+            :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
+    (when (get-in config [:omni/css])
+      (let [digest (digest/from-file (io/resource "public/css/styles.css"))]
         [:link {:rel "stylesheet" 
                 :href (str "/css/styles.css?v=" digest) 
                 :media "screen" 
-                :integrity (str "sha256-" digest)}])]
+                :integrity (str "sha256-" digest)}]))]
+   (when (get-in config [:omni/cljs])
      [:body
       [:div#app
        [:div#message {:style "display: flex; justify-content: center; align-items: center; height: 100%"}
         "This app requires Javascript. Please enable Javascript in your browser."]]
       [:script {:type "text/javascript"}
        "document.getElementById('message').outerHTML= '';"]
-      (let [digest (digest/from-file "public/js/app.js")]
+      (let [digest (digest/from-file (io/resource "public/js/app.js"))]
         [:script {:type "text/javascript"
                   :src (str "/js/app.js?v=" digest)
                   :crossorigin "anonymous"
                   :integrity (str "sha256-" digest)}])
       [:script {:type "text/javascript"}
-       (str (string/replace main #"-" "_") ".init();")]]]))
+       (str (string/replace (get-in config [:omni/cljs :main]) #"-" "_") ".init();")]])])
 
 (defn- add-mime-type [response path]
   (if-let [mime-type (ring.mime/ext-mime-type path)]

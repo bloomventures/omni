@@ -2,7 +2,89 @@
 
 A collection of lein tools, namespaces and functions, commonly used across Bloom projects.
 
-## Using Omni
+
+
+## Omni Core 
+
+Omni will...
+
+- Compile CLJS and CSS (live-updates in dev; static compile for prod)
+- Serve an html file pointing to relevant JS and CSS files. This file will be retunred for for all HTTP requests (except for those handled by the API and static resources under `/resources/public/*`))
+- Server 
+
+Add the following to your `project.clj`:
+
+```clojure
+:dependencies [[io.bloomventures/omni "0.11.0"]]
+
+:plugins [[io.bloomventures/omni "0.11.0"]] 
+
+:omni-config app.core/config
+
+:profiles {:uberjar {:aot :all
+                     :prep-tasks [["omni" "compile"]
+                                 "compile"]}}
+```
+
+Somewhere in your app, have a function to start omni:
+
+```
+(ns app.core
+  (:gen-class)
+  (:require
+    [bloom.omni.core :as omni]))
+
+(def config
+  {:omni/title "My Title" 
+   :omni/cljs {:main "app.core"}  
+   :omni/css {:styles "app.styles/styles"} 
+   :omni/api-routes [[[:get "/api/:id"]
+                      (fn [request]
+                       {:status 200
+                        :body {:id (get-in request [:params :id])})]]})
+
+(defn start!
+  (omni/start! omni/system config)) 
+
+(defn stop!
+  (omni/stop!)) 
+
+(defn -main []
+  (start!))
+```
+
+In production, you should probably pass the following env vars:
+
+```
+   HTTP_PORT=1234
+   ENVIRONMENT=prod
+```
+
+Conventions:
+
+- expects `init()` and `reload()` fns in the main cljs namespace (remember to mark as ^:export)
+- css `styles()` returns a garden object
+
+## Other helper namespaces:
+
+### EAV
+
+### env
+
+### uuid
+
+### fx/ajax
+
+### fx/dispatch-debounce
+
+### fx/router
+
+### fx/title
+
+
+
+
+## Developing Omni
 
 Clone omni and install it locally:
 ```
@@ -10,35 +92,6 @@ git clone git@github.com:bloomventures/omni.git`
 cd omni
 lein install
 ```
-
-Then, in your project:
-
-(1) Add the following to your `project.clj`:
-
-```clojure
-:dependencies [[io.bloomventures/omni "0.11.0"]]
-
-:plugins [[io.bloomventures/omni "0.11.0"]] ; for "omni compile" task
-
-:omni-config path.to/config
-
-:profiles {:uberjar {:aot :all
-                     :prep-tasks [["omni" "compile"]
-                                 "compile"]}}
-```
-
-(2) Create an `omni.config.edn` file in the project's root directory, or, somewhere in your app:
-
-```clojure
-{:title "New App"
- :css {:styles "path.to/styles"}
- :cljs {:main "path.to.cljs.core"}
- :routes [...]
- :figwheel-port 1234
- :http-port 1111}
-```
-
-## Developing Omni
 
 - should only expose what's necessary (`defn-` the rest)
 - should have unit tests for public functions

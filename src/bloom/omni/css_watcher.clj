@@ -21,7 +21,7 @@
   ; causing figwheel to send multiple css files, which is janky
   ; just filtering for :modify events isn't sufficient
   (async/debounce 
-    (fn [{:keys [output-to styles] :as css-config}]
+    (fn [{:keys [output-to] :as css-config}]
       (try
         (do
           (cssbuild/mkdir output-to)

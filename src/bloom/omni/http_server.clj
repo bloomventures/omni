@@ -15,7 +15,7 @@
   (println "HTTP server stopped"))
 
 (defn start!
-  [port handler]
+  [{:keys [port handler]}]
   (println (str "Starting HTTP server..."))
   (let [server (run-server handler
                            {:port port

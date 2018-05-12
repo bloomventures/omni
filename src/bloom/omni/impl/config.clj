@@ -1,21 +1,39 @@
 (ns bloom.omni.impl.config
+  (:refer-clojure :exclude [read])
   (:require
-    [clojure.java.io :as io]))
+    [clojure.spec.alpha :as s]
+    [clojure.java.io :as io]
+    [bloom.omni.env :refer [env]]
+    [spec-tools.data-spec :as ds]))
 
-(def base-config
-  {:title "Omni App"
-   :css {:output-to "resources/public/css/styles.css"}
-   :figwheel-port 5123
-   :http-port 6123})
+(def config-spec 
+  (ds/spec
+    {:name :omni/config
+     :spec {(ds/opt :omni/title) string?
+            (ds/opt :omni/css) {:styles string?}
+            (ds/opt :omni/cljs) {:main string?}
+            (ds/opt :omni/http-port) integer?
+            (ds/opt :omni/environment) keyword?
+            (ds/opt :omni/api-routes) vector?}}))
 
-(defn- parse [path]
-  (if (.exists (io/file path))
-    (do
-      (println "Reading omni config from " path)
-      (->> path
-           slurp
-           read-string))
-    (println "No omni.config.edn found; using defaults.")))
+(defn- config-from-env []
+  (merge {}
+         (if-let [port (some-> (env :http-port)
+                               (Integer/parseInt))] 
+           {:omni/http-port port}
+           {})
+         (if-let [environment (some-> (env :environment)
+                                      keyword)] 
+           {:omni/environment environment}
+           {})))
+
+(defn- config-from-file [] 
+  (let [path "config.edn"]
+    (if (.exists (io/file path)) 
+      (->> path 
+           slurp 
+           read-string)
+      {}))) 
 
 (defn fill [config]
   (merge-with (fn [a b]
@@ -26,6 +44,13 @@
                   (concat a b)
                   :else
                   b))
-              base-config
-              (parse "omni.config.edn")
+              (config-from-file)
+              (config-from-env)
               config))
+
+(defn read [config]
+  (let [config (fill config)]
+    (if (s/valid? config-spec config)
+      config
+      (throw (Exception. (str "Config Invalid: "
+                              (s/explain config-spec config)))))))

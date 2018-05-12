@@ -13,21 +13,26 @@
       (.setLastModified (io/file path) t))))
 
 (defn compile-css! [c]
-  (let [path (get-in (config/fill c) [:css :output-to])]
-    (cssbuild/compile! (:css (config/fill c)))
-    (gzip/compress path)
-    (touch path (str path ".gz"))))
+  (when (config :omni/css)
+    (let [path "resources/public/css/styles.css"]
+      (cssbuild/compile! {:styles (get-in config [:omni/css :styles])
+                          :output-to path
+                          :pretty-print? false})
+      (gzip/compress path)
+      (touch path (str path ".gz")))))
     
-(defn compile-js! [c]
-  (let [prod-build (->> (builds (config/fill c))
-                        (filter (fn [b]
-                                  (= "prod" (b :id))))
-                        first)
-        path (get-in prod-build [:compiler :output-to])]
-    (cljsbuild/compile! prod-build)
-    (gzip/compress path)
-    (touch path (str path ".gz"))))
+(defn compile-js! [config]
+  (when (config :omni/cljs)
+    (let [prod-build (->> (builds (get-in config [:omni/cljs :main]))
+                          (filter (fn [b]
+                                    (= "prod" (b :id))))
+                          first)
+          path "resources/public/js/app.js"]
+      (cljsbuild/compile! prod-build)
+      (gzip/compress path)
+      (touch path (str path ".gz")))))
 
-(defn compile! [c]
-  (compile-css! c)
-  (compile-js! c))
+(defn compile! [config]
+  (let [config (config/read config)]
+    (compile-css! config)
+    (compile-js! config)))

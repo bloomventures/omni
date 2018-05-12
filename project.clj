@@ -1,4 +1,4 @@
-(defproject io.bloomventures/omni "0.12.0"
+(defproject io.bloomventures/omni "0.13.0"
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
 
@@ -12,6 +12,7 @@
                  [hawk "0.2.11"] ; css-watcher
                  [hiccup "1.0.5"] ; spa, auth.google
                  [http-kit "2.2.0"] ; http-server
+                 [metosin/spec-tools "0.6.1"] ; config
                  [org.clojure/core.async "0.4.474"] ; impl.async
                  [ring/ring-core "1.6.3"] ; spa
                  [ring/ring-defaults "0.3.1"] ; ring
