@@ -6,6 +6,15 @@
     [spec-tools.data-spec :as ds]
     [bloom.omni.env :refer [env]]))
 
+(defn- deep-merge [& args]
+  (apply merge-with 
+    (fn [a b]
+      (cond
+        (map? a) (deep-merge a b)
+        (vector? a) (concat a b)
+        :else b))
+    args))
+
 (def config-spec 
   (ds/spec
     {:name :omni/config
@@ -24,19 +33,19 @@
             (ds/opt :omni/api-routes) vector?}}))
 
 (defn- config-from-env []
-  (merge {}
-         (when-let [port (some-> (env :http-port)
-                               (Integer/parseInt))] 
-           {:omni/http-port port})
-         (when-let [environment (some-> (env :environment)
-                                      keyword)] 
-           {:omni/environment environment})
-         (when-let [cookie-secret (env :cookie-secret)]
-           {:omni/auth {:cookie-secret cookie-secret}})
-         (when-let [domain (env :domain)]
-           {:omni/auth {:google {:domain domain}}})
-         (when-let [client-id (env :client-id)]
-           {:omni/auth {:google {:client-id client-id}}})))
+  (deep-merge {}
+              (when-let [port (some-> (env :http-port)
+                                      (Integer/parseInt))] 
+                {:omni/http-port port})
+              (when-let [environment (some-> (env :environment)
+                                             keyword)] 
+                {:omni/environment environment})
+              (when-let [cookie-secret (env :cookie-secret)]
+                {:omni/auth {:cookie-secret cookie-secret}})
+              (when-let [domain (env :domain)]
+                {:omni/auth {:google {:domain domain}}})
+              (when-let [client-id (env :client-id)]
+                {:omni/auth {:google {:client-id client-id}}})))
 
 (defn- config-from-file [] 
   (let [path "config.edn"]
@@ -45,15 +54,6 @@
            slurp 
            read-string)
       {}))) 
-
-(defn- deep-merge [& args]
-  (apply merge-with 
-    (fn [a b]
-      (cond
-        (map? a) (deep-merge a b)
-        (vector? a) (concat a b)
-        :else b))
-    args))
 
 (defn fill [config]
   (deep-merge (config-from-file)
