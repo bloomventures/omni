@@ -53,6 +53,11 @@ Somewhere in your app, have a function to start omni:
   (start!))
 ```
 
+In dev, you should probably also have a `config.edn` with:
+```
+{:omni/http-port 1234}
+```
+
 In production, you should probably pass the following env vars:
 
 ```
@@ -64,6 +69,24 @@ Conventions:
 
 - expects `init()` and `reload()` fns in the main cljs namespace (remember to mark as ^:export)
 - css `styles()` returns a garden object
+
+## Omni Auth
+
+Add the following `config.edn`:
+
+```
+{:omni/auth {:google {:client-id "key-from-google"
+                      :domain "http://localhost:1234"}}}
+```
+
+In prod, pass the following env vars:
+```
+COOKIE_SECRET="16-byte-string"
+CLIENT_ID="key-from-google"
+DOMAIN="https://domain.in.prod.com"
+```
+
+See `bloom.omni.auth/fx` for re-frame helpers.
 
 ## Other helper namespaces:
 

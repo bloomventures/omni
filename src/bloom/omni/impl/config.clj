@@ -3,8 +3,8 @@
   (:require
     [clojure.spec.alpha :as s]
     [clojure.java.io :as io]
-    [bloom.omni.env :refer [env]]
-    [spec-tools.data-spec :as ds]))
+    [spec-tools.data-spec :as ds]
+    [bloom.omni.env :refer [env]]))
 
 (def config-spec 
   (ds/spec
@@ -14,18 +14,29 @@
             (ds/opt :omni/cljs) {:main string?}
             (ds/opt :omni/http-port) integer?
             (ds/opt :omni/environment) keyword?
+            (ds/opt :omni/auth) {(ds/opt :cookie-secret) (fn [s]
+                                                           (and 
+                                                             (string? s)
+                                                             (= 16 (count s))))
+                                 (ds/opt :cookie-name) string?
+                                 (ds/opt :google) {:client-id string?
+                                                   :domain string?}}
             (ds/opt :omni/api-routes) vector?}}))
 
 (defn- config-from-env []
   (merge {}
-         (if-let [port (some-> (env :http-port)
+         (when-let [port (some-> (env :http-port)
                                (Integer/parseInt))] 
-           {:omni/http-port port}
-           {})
-         (if-let [environment (some-> (env :environment)
+           {:omni/http-port port})
+         (when-let [environment (some-> (env :environment)
                                       keyword)] 
-           {:omni/environment environment}
-           {})))
+           {:omni/environment environment})
+         (when-let [cookie-secret (env :cookie-secret)]
+           {:omni/auth {:cookie-secret cookie-secret}})
+         (when-let [domain (env :domain)]
+           {:omni/auth {:google {:domain domain}}})
+         (when-let [client-id (env :client-id)]
+           {:omni/auth {:google {:client-id client-id}}})))
 
 (defn- config-from-file [] 
   (let [path "config.edn"]
@@ -35,16 +46,17 @@
            read-string)
       {}))) 
 
+(defn- deep-merge [& args]
+  (apply merge-with 
+    (fn [a b]
+      (cond
+        (map? a) (deep-merge a b)
+        (vector? a) (concat a b)
+        :else b))
+    args))
+
 (defn fill [config]
-  (merge-with (fn [a b]
-                (cond
-                  (map? a)
-                  (merge a b)
-                  (vector? a)
-                  (concat a b)
-                  :else
-                  b))
-              (config-from-file)
+  (deep-merge (config-from-file)
               (config-from-env)
               config))
 

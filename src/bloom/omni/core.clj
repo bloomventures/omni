@@ -6,22 +6,28 @@
     [bloom.omni.impl.port :as port]
     [bloom.omni.impl.ring :as ring]
     [bloom.omni.impl.middleware :as middleware]
+    [bloom.omni.auth.routes :as auth.routes]
     [bloom.omni.spa :as spa]
     [bloom.omni.impl.config :as config]))
 
 (def http-server 
   {:start (fn [config]
             (let [api-middleware 
-                  (if (= :prod (config :environment)) 
-                    (middleware/api {:secure? true})
-                    (middleware/api {:secure? false}))] 
+                  (middleware/api {:production? (= :prod (config :environment))
+                                   :session? (boolean (config :omni/auth))
+                                   :cookie-secret (get-in config [:omni/auth :cookie-secret])
+                                   :cookie-name (get-in config [:omni/auth :cookie-name])})] 
               (http-server/start! 
-                {:port (or (config :http-port)
+                {:port (or (config :omni/http-port)
                            (port/next-available))
-                 :handler (ring/combine
-                            (-> (ring/->handler (config :omni/api-routes))
-                                api-middleware)
-                            (ring/->handler (spa/routes config)))})))
+                 :handler (apply ring/combine
+                            (->> [(when (config :omni/auth)
+                                    (-> (ring/->handler (auth.routes/routes config))
+                                        api-middleware))
+                                  (-> (ring/->handler (config :omni/api-routes))
+                                      api-middleware)
+                                  (ring/->handler (spa/routes config))]
+                                 (remove nil?)))})))
    :stop (fn [self]
            (http-server/stop! self))})
 
