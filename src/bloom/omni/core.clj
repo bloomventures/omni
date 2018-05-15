@@ -13,7 +13,7 @@
 (def http-server 
   {:start (fn [config]
             (let [api-middleware 
-                  (middleware/api {:production? (= :prod (config :environment))
+                  (middleware/api {:production? (= :prod (config :omni/environment))
                                    :session? (boolean (config :omni/auth))
                                    :cookie-secret (get-in config [:omni/auth :cookie-secret])
                                    :cookie-name (get-in config [:omni/auth :cookie-name])})] 
@@ -49,7 +49,7 @@
 
 (def system
   {:deps (fn [config] 
-           (if (= "prod" (config :environment))
+           (if (= "prod" (config :omni/environment))
              [http-server]
              [figwheel
               css-watcher
