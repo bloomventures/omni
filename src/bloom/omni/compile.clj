@@ -12,7 +12,7 @@
     (doseq [path paths]
       (.setLastModified (io/file path) t))))
 
-(defn compile-css! [c]
+(defn compile-css! [config]
   (when (config :omni/css)
     (let [path "resources/public/css/styles.css"]
       (cssbuild/compile! {:styles (get-in config [:omni/css :styles])
