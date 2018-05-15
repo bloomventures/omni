@@ -49,7 +49,7 @@
 
 (def system
   {:deps (fn [config] 
-           (if (= "prod" (config :omni/environment))
+           (if (= :prod (config :omni/environment))
              [http-server]
              [figwheel
               css-watcher
