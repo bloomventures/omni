@@ -1,7 +1,7 @@
 (ns bloom.omni.core
   (:require
-    [bloom.omni.http-server :as http-server] 
-    [bloom.omni.figwheel :as figwheel] 
+    [bloom.omni.http-server :as http-server]
+    [bloom.omni.figwheel :as figwheel]
     [bloom.omni.css-watcher :as css-watcher]
     [bloom.omni.impl.port :as port]
     [bloom.omni.impl.ring :as ring]
@@ -10,14 +10,14 @@
     [bloom.omni.spa :as spa]
     [bloom.omni.impl.config :as config]))
 
-(def http-server 
+(def http-server
   {:start (fn [config]
-            (let [api-middleware 
+            (let [api-middleware
                   (middleware/api {:production? (= :prod (config :omni/environment))
                                    :session? (boolean (config :omni/auth))
                                    :cookie-secret (get-in config [:omni/auth :cookie-secret])
-                                   :cookie-name (get-in config [:omni/auth :cookie-name])})] 
-              (http-server/start! 
+                                   :cookie-name (get-in config [:omni/auth :cookie-name])})]
+              (http-server/start!
                 {:port (or (config :omni/http-port)
                            (port/next-available))
                  :handler (apply ring/combine
@@ -31,15 +31,15 @@
    :stop (fn [self]
            (http-server/stop! self))})
 
-(def css-watcher 
+(def css-watcher
   {:start (fn [config]
             (when (config :omni/css)
               (css-watcher/start! {:styles (get-in config [:omni/css :styles])
-                                   :output-to "resources/public/css/styles.css"}))) 
+                                   :output-to "resources/public/css/styles.css"})))
    :stop (fn [self]
            (css-watcher/stop! self))})
 
-(def figwheel 
+(def figwheel
   {:start (fn [config]
             (when (config :omni/cljs)
               (figwheel/start! {:server-port (port/next-available)
@@ -48,7 +48,7 @@
            (figwheel/stop!))})
 
 (def system
-  {:deps (fn [config] 
+  {:deps (fn [config]
            (if (= :prod (config :omni/environment))
              [http-server]
              [figwheel
