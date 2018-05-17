@@ -7,7 +7,7 @@
     [bloom.omni.env :refer [env]]))
 
 (defn- deep-merge [& args]
-  (apply merge-with 
+  (apply merge-with
     (fn [a b]
       (cond
         (map? a) (deep-merge a b)
@@ -15,7 +15,7 @@
         :else b))
     args))
 
-(def config-spec 
+(def config-spec
   (ds/spec
     {:name :omni/config
      :spec {(ds/opt :omni/title) string?
@@ -24,7 +24,7 @@
             (ds/opt :omni/http-port) integer?
             (ds/opt :omni/environment) keyword?
             (ds/opt :omni/auth) {(ds/opt :cookie-secret) (fn [s]
-                                                           (and 
+                                                           (and
                                                              (string? s)
                                                              (= 16 (count s))))
                                  (ds/opt :cookie-name) string?
@@ -35,10 +35,10 @@
 (defn- config-from-env []
   (deep-merge {}
               (when-let [port (some-> (env :http-port)
-                                      (Integer/parseInt))] 
+                                      (Integer/parseInt))]
                 {:omni/http-port port})
               (when-let [environment (some-> (env :environment)
-                                             keyword)] 
+                                             keyword)]
                 {:omni/environment environment})
               (when-let [cookie-secret (env :cookie-secret)]
                 {:omni/auth {:cookie-secret cookie-secret}})
@@ -47,13 +47,13 @@
               (when-let [client-id (env :client-id)]
                 {:omni/auth {:google {:client-id client-id}}})))
 
-(defn- config-from-file [] 
+(defn- config-from-file []
   (let [path "config.edn"]
-    (if (.exists (io/file path)) 
-      (->> path 
-           slurp 
+    (if (.exists (io/file path))
+      (->> path
+           slurp
            read-string)
-      {}))) 
+      {})))
 
 (defn fill [config]
   (deep-merge (config-from-file)
