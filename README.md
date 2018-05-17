@@ -4,20 +4,20 @@ A collection of lein tools, namespaces and functions, commonly used across Bloom
 
 
 
-## Omni Core 
+## Omni Core
 
 Omni will...
 
 - Compile CLJS and CSS (live-updates in dev; static compile for prod)
 - Serve an html file pointing to relevant JS and CSS files. This file will be retunred for for all HTTP requests (except for those handled by the API and static resources under `/resources/public/*`))
-- Server 
+- Server
 
 Add the following to your `project.clj`:
 
 ```clojure
 :dependencies [[io.bloomventures/omni "0.11.0"]]
 
-:plugins [[io.bloomventures/omni "0.11.0"]] 
+:plugins [[io.bloomventures/omni "0.11.0"]]
 
 :omni-config app.core/config
 
@@ -35,19 +35,19 @@ Somewhere in your app, have a function to start omni:
     [bloom.omni.core :as omni]))
 
 (def config
-  {:omni/title "My Title" 
-   :omni/cljs {:main "app.core"}  
-   :omni/css {:styles "app.styles/styles"} 
+  {:omni/title "My Title"
+   :omni/cljs {:main "app.core"}
+   :omni/css {:styles "app.styles/styles"}
    :omni/api-routes [[[:get "/api/:id"]
                       (fn [request]
                        {:status 200
                         :body {:id (get-in request [:params :id])})]]})
 
 (defn start!
-  (omni/start! omni/system config)) 
+  (omni/start! omni/system config))
 
 (defn stop!
-  (omni/stop!)) 
+  (omni/stop!))
 
 (defn -main []
   (start!))
