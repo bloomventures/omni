@@ -53,7 +53,7 @@ Somewhere in your app, have a function to start omni:
   (start!))
 ```
 
-In dev, you should probably also have a `config.edn` with:
+In dev, you should probably also have a `config.edn` at the root of the project (i.e. in the same directory as your `project.clj`) with:
 ```
 {:omni/http-port 1234}
 ```
