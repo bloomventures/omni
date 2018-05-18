@@ -24,7 +24,7 @@
     (fn [{:keys [output-to] :as css-config}]
       (try
         (do
-          (cssbuild/mkdir output-to)
+          (cssbuild/mkdirs output-to)
           (let [output (cssbuild/compile-css css-config)
                 output-hash (hash output)]
             (when (not= output-hash @previous-output-hash)
