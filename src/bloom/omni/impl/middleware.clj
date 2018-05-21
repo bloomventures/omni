@@ -37,4 +37,4 @@
                                          :session? session?
                                          :cookie-secret cookie-secret
                                          :cookie-name cookie-name}))
-        (wrap-restful-format :formats [:transit-json]))))
+        (wrap-restful-format :formats [:json :edn :yaml :transit-json]))))
