@@ -19,11 +19,12 @@
     [:meta {:name "viewport"
             :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
     (when (get-in config [:omni/css])
-      (let [digest (digest/from-file (io/resource "public/css/styles.css"))]
+      (let [digest (digest/from-file (io/resource "public/css/styles.css"))
+            digest-gz (digest/from-file (io/resource "public/css/styles.css.gz"))]
         [:link {:rel "stylesheet" 
                 :href (str "/css/styles.css?v=" digest) 
                 :media "screen" 
-                :integrity (str "sha256-" digest)}]))]
+                :integrity (str "sha256-" digest " " "sha256-" digest-gz)}]))]
    (when (get-in config [:omni/cljs])
      [:body
       [:div#app
@@ -31,11 +32,12 @@
         "This app requires Javascript. Please enable Javascript in your browser."]]
       [:script {:type "text/javascript"}
        "document.getElementById('message').outerHTML= '';"]
-      (let [digest (digest/from-file (io/resource "public/js/app.js"))]
+      (let [digest (digest/from-file (io/resource "public/js/app.js"))
+            digest-gz (digest/from-file (io/resource "public/js/app.js.gz"))]
         [:script {:type "text/javascript"
                   :src (str "/js/app.js?v=" digest)
                   :crossorigin "anonymous"
-                  :integrity (str "sha256-" digest)}])
+                  :integrity (str "sha256-" digest " " "sha256-" digest-gz)}])
       [:script {:type "text/javascript"}
        (str (string/replace (get-in config [:omni/cljs :main]) #"-" "_") ".init();")]])])
 
