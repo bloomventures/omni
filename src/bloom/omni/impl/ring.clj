@@ -2,7 +2,7 @@
   (:require
     [clout.core :as clout]))
 
-(defn prepare-routes 
+(defn prepare-routes
   "Given routes of the form:
   [
     [
@@ -13,7 +13,7 @@
     ...
   ]
    converts to the form:
-   
+
    [
      {:method :method
       :uri \"url-pattern\"
@@ -30,22 +30,22 @@
 
 
 
-(defn- filter-matching 
-  "Filter a list of potential routes to return only those that can handle the request. 
+(defn- filter-matching
+  "Filter a list of potential routes to return only those that can handle the request.
 
    A route can handle a request if:
-  (1) the route's method matches the request method (or the route has method: :any), 
+  (1) the route's method matches the request method (or the route has method: :any),
   (2) the route's url matches the request's url (according to clout)"
   [routes request]
   (->> routes
        (filter (fn [{:keys [method matcher]}]
-                 (and 
+                 (and
                    (or
                      (= method :any)
                      (= method (request :request-method)))
                    (clout/route-matches matcher request))))))
 
-(defn- dispatch 
+(defn- dispatch
   "Given a list of routes, return the result of the first which returns a truthy value"
   [routes request]
   (->> routes
@@ -54,20 +54,20 @@
                      params (clout/route-matches (route :matcher) request)]
                  (handler-fn (update request :params merge params)))))))
 
-(defn ->handler 
+(defn ->handler
   "Given an list of pattern - handler pairs (see example below), returns a ring handler.
 
-   Given a request, the handler will return a response from the first route that: 
-     (1) matches the method (:any is allowed), 
+   Given a request, the handler will return a response from the first route that:
+     (1) matches the method (:any is allowed),
      (2) matches the url pattern, and
      (3) returns a truthy value
 
    URL pattern matching is done with the clout library (ie. same as compojure).
 
-   [ 
+   [
      [
-      [:get \"/path/\"] 
-      (fn [request] 
+      [:get \"/path/\"]
+      (fn [request]
         {:status 200
          :body \"OK\"})
       [middleware-fn middleware-fn] ; optional
@@ -81,7 +81,7 @@
           (filter-matching request)
           (dispatch request)))))
 
-(defn combine 
+(defn combine
   "Combine multiple ring handlers"
   [& handlers]
   (fn [request]

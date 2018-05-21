@@ -1,6 +1,6 @@
 (ns bloom.omni.spa
   "Exposes a set of omni-style routes for serving an SPA, including:
-     - 'immutable' app.js 
+     - 'immutable' app.js
      - resource routes (server from /public/*)
      - a catch-all html file that refers app.js and styles.css with cache-busting and integrity checking"
   (:require
@@ -47,16 +47,16 @@
     response))
 
 (defn- resource-response [path]
-  (some-> 
+  (some->
     (ring.response/resource-response path)
     (add-mime-type path)))
 
 (defn routes [config]
-  [[[:get "/js/app.js"] 
+  [[[:get "/js/app.js"]
     (fn [_]
       (some-> (resource-response "public/js/app.js")
-              (assoc-in 
-                [:headers "Cache-Control"] 
+              (assoc-in
+                [:headers "Cache-Control"]
                 "max-age=365000000, immutable")))]
 
    [[:get "/*"]
