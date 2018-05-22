@@ -20,14 +20,15 @@
               (http-server/start!
                 {:port (or (config :omni/http-port)
                            (port/next-available))
-                 :handler (apply ring/combine
+                 :handler (ring/combine
                             (->> [(when (config :omni/auth)
                                     (-> (ring/->handler (auth.routes/routes config))
                                         api-middleware))
-                                  (-> (ring/->handler (config :omni/api-routes))
-                                      api-middleware)
-                                  (ring/->handler (spa/routes config))]
-                                 (remove nil?)))})))
+                                  (ring/->handler (config :omni/api-routes))]
+                                 (remove nil?)
+                                 (apply ring/combine)
+                                 api-middleware) 
+                            (ring/->handler (spa/routes config)))})))
    :stop (fn [self]
            (http-server/stop! self))})
 
