@@ -2,9 +2,7 @@
   (:require
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.session.cookie :refer [cookie-store]]
-    [ring.middleware.defaults :refer [wrap-defaults
-                                      api-defaults
-                                      secure-api-defaults]]))
+    [ring.middleware.defaults :refer [wrap-defaults]]))
 
 (defn defaults-config 
   [{:keys [production? session? cookie-name cookie-secret]}]
