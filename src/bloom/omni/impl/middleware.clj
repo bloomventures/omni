@@ -9,6 +9,8 @@
   (when (and production? session? (nil? cookie-secret))
     (throw (Exception. (str "Must set a cookie-secret in production."))))
   (-> {:proxy production?
+       :params {:keywordize true
+                :urlencoded true}
        :responses {:not-modified-responses true
                    :absolute-redirects true
                    :content-types true
