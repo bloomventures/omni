@@ -1,6 +1,8 @@
 (ns leiningen.omni
-  (:require 
-    [leiningen.core.project :as p]))
+  (:require
+   [leiningen.core.eval]
+   [leiningen.core.main]
+   [leiningen.core.project :as p]))
 
 (defn compile! 
   [project]
