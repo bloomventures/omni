@@ -4,12 +4,12 @@
    [leiningen.core.main]
    [leiningen.core.project :as p]))
 
-(defn compile! 
+(defn compile!
   [project]
   (let [config (project :omni-config)
         config-ns (symbol (namespace config))]
-    (leiningen.core.eval/eval-in-project 
-      project 
+    (leiningen.core.eval/eval-in-project
+      project
       `(do
          (bloom.omni.compile/compile! ~config))
       `(do (require '~config-ns)

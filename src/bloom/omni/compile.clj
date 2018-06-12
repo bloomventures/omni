@@ -20,7 +20,7 @@
                           :pretty-print? false})
       (gzip/compress path)
       (touch path (str path ".gz")))))
-    
+
 (defn compile-js! [config]
   (when (config :omni/cljs)
     (let [prod-build (->> (builds (get-in config [:omni/cljs :main]))
