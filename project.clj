@@ -20,4 +20,5 @@
                  [secretary "1.2.3"] ; fx.router
                  [venantius/accountant "0.2.4"] ; fx.router
 
+                 [leiningen-core "2.8.1"]
                  ])
