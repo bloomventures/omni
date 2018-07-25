@@ -1,8 +1,8 @@
 (ns bloom.omni.css-watcher
-  "Provides a component that watches the src directory for changes to cljc files and compiles garden to css. 
+  "Provides a component that watches the src directory for changes to cljc files and compiles garden to css.
 
   Requires `{:css {:main \"...\"}}` to be set in `omni.config.edn`
-  
+
   ```clojure
   (require '[bloom.omni.css-watcher :as css-watcher])
   (css-watcher/start!)
@@ -16,11 +16,11 @@
 
 (def previous-output-hash (atom nil))
 
-(def compile! 
+(def compile!
   ; debounce, b/c some editors trigger multiple events on a file
   ; causing figwheel to send multiple css files, which is janky
   ; just filtering for :modify events isn't sufficient
-  (async/debounce 
+  (async/debounce
     (fn [{:keys [output-to] :as css-config}]
       (try
         (do
@@ -46,11 +46,11 @@
                           {:pretty-print? true})]
 
     (compile! css-config)
-     
+
     (hawk/watch! [{:paths ["src"]
                    :handler
                    (fn [_ {:keys [kind file]}]
-                     (when (and 
+                     (when (and
                              (.isFile file)
                              (string/ends-with? (.getName file) "cljc"))
                        (compile! css-config))
