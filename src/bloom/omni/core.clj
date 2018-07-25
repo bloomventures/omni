@@ -37,7 +37,8 @@
               (css-watcher/start! {:styles (get-in config [:omni/css :styles])
                                    :output-to "resources/public/css/styles.css"})))
    :stop (fn [self]
-           (css-watcher/stop! self))})
+           (when self
+             (css-watcher/stop! self)))})
 
 (def figwheel
   {:start (fn [config]
