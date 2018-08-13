@@ -41,12 +41,12 @@ Somewhere in your app, have a function to start omni:
    :omni/api-routes [[[:get "/api/:id"]
                       (fn [request]
                        {:status 200
-                        :body {:id (get-in request [:params :id])})]]})
+                        :body {:id (get-in request [:params :id])}})]]})
 
-(defn start!
+(defn start! []
   (omni/start! omni/system config))
 
-(defn stop!
+(defn stop! []
   (omni/stop!))
 
 (defn -main []
