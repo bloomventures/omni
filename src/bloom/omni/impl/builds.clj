@@ -5,7 +5,7 @@
     :figwheel {:on-jsload (str main "/reload")}
     :source-paths ["src"]
     :compiler {:main main
-               :output-to "resources/public/js/app.js" 
+               :output-to "resources/public/js/app.js"
                :asset-path "/js/dev"
                :output-dir "resources/public/js/dev"
                :verbose true}}
