@@ -27,6 +27,10 @@
                           (filter (fn [b]
                                     (= "prod" (b :id))))
                           first)
+          prod-build (update prod-build
+                             :compiler
+                             merge
+                             (get-in config [:omni/cljs :compiler]))
           path "resources/public/js/app.js"]
       (cljsbuild/compile! prod-build)
       (gzip/compress path)
