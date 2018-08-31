@@ -4,7 +4,7 @@
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.middleware.defaults :refer [wrap-defaults]]))
 
-(defn defaults-config 
+(defn defaults-config
   [{:keys [production? session? cookie-name cookie-secret]}]
   (when (and production? session? (nil? cookie-secret))
     (throw (Exception. (str "Must set a cookie-secret in production."))))
@@ -28,7 +28,7 @@
                                          :same-site :strict
                                          :max-age (* 60 60 24 365)}}}))))
 
-(defn api 
+(defn api
   "Returns API defaults middleware"
   [{:keys [production? session? cookie-secret cookie-name]}]
   (fn [handler]
