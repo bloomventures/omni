@@ -9,10 +9,12 @@
                :output-to "resources/public/js/app.js"
                :asset-path "/js/dev"
                :output-dir "resources/public/js/dev"
+               :closure-defines {"goog.DEBUG" true}
                :verbose true}}
    {:id "prod"
     :source-paths ["src"]
     :compiler {:main main
                :output-to "resources/public/js/app.js"
                :output-dir "target/cljs-prod"
+               :closure-defines {"goog.DEBUG" false}
                :optimizations :advanced}}])
