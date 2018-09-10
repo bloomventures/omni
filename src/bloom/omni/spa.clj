@@ -21,10 +21,13 @@
     (when (get-in config [:omni/css])
       (let [digest (digest/from-file (io/resource "public/css/styles.css"))
             digest-gz (digest/from-file (io/resource "public/css/styles.css.gz"))]
-        [:link {:rel "stylesheet" 
-                :href (str "/css/styles.css?v=" digest) 
-                :media "screen" 
-                :integrity (str "sha256-" digest " " "sha256-" digest-gz)}]))]
+        [:link {:rel "stylesheet"
+                :href (str "/css/styles.css?v=" digest)
+                :media "screen"
+                :integrity (->> [digest digest-gz]
+                                (remove nil?)
+                                (map (fn [d] (str "sha256-" d)))
+                                (string/join " "))}]))]
    (when (get-in config [:omni/cljs])
      [:body
       [:div#app
@@ -37,7 +40,10 @@
         [:script {:type "text/javascript"
                   :src (str "/js/app.js?v=" digest)
                   :crossorigin "anonymous"
-                  :integrity (str "sha256-" digest " " "sha256-" digest-gz)}])
+                  :integrity (->> [digest digest-gz]
+                                  (remove nil?)
+                                  (map (fn [d] (str "sha256-" d)))
+                                  (string/join " "))}])
       [:script {:type "text/javascript"}
        (str (string/replace (get-in config [:omni/cljs :main]) #"-" "_") ".init();")]])])
 
