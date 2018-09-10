@@ -2,7 +2,8 @@
 
 (defn builds [main]
   [{:id "dev"
-    :figwheel {:on-jsload (str main "/reload")}
+    :figwheel {:on-jsload (str main "/reload")
+               :websocket-host :js-client-host}
     :source-paths ["src"]
     :compiler {:main main
                :output-to "resources/public/js/app.js"
