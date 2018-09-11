@@ -15,9 +15,9 @@ Omni will...
 Add the following to your `project.clj`:
 
 ```clojure
-:dependencies [[io.bloomventures/omni "0.11.0"]]
+:dependencies [[io.bloomventures/omni "0.16.0"]]
 
-:plugins [[io.bloomventures/omni "0.11.0"]]
+:plugins [[io.bloomventures/omni "0.16.0"]]
 
 :omni-config app.core/config
 
