@@ -34,14 +34,17 @@ Somewhere in your app, have a function to start omni:
   (:require
     [bloom.omni.core :as omni]))
 
+(def routes
+  [[[:get "/api/:id"]
+    (fn [request]
+      {:status 200
+       :body {:id (get-in request [:params :id])}})]])
+
 (def config
   {:omni/title "My Title"
    :omni/cljs {:main "app.core"}
    :omni/css {:styles "app.styles/styles"}
-   :omni/api-routes [[[:get "/api/:id"]
-                      (fn [request]
-                       {:status 200
-                        :body {:id (get-in request [:params :id])}})]]})
+   :omni/api-routes #'routes})
 
 (defn start! []
   (omni/start! omni/system config))

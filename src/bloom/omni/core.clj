@@ -24,10 +24,13 @@
                             (->> [(when (config :omni/auth)
                                     (-> (ring/->handler (auth.routes/routes config))
                                         api-middleware))
-                                  (ring/->handler (config :omni/api-routes))]
+                                  (ring/->handler
+                                    (if (= :prod (config :omni/environment))
+                                      (var-get (config :omni/api-routes))
+                                      (config :omni/api-routes)))]
                                  (remove nil?)
                                  (apply ring/combine)
-                                 api-middleware) 
+                                 api-middleware)
                             (ring/->handler (spa/routes config)))})))
    :stop (fn [self]
            (http-server/stop! self))})

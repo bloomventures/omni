@@ -30,7 +30,7 @@
                                  (ds/opt :cookie-name) string?
                                  (ds/opt :google) {:client-id string?
                                                    :domain string?}}
-            (ds/opt :omni/api-routes) vector?}}))
+            (ds/opt :omni/api-routes) var?}}))
 
 (defn- config-from-env []
   (deep-merge {}

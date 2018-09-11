@@ -28,34 +28,43 @@
                :matcher (clout/route-compile uri)
                :handler-fn ((apply comp (reverse middleware)) handler)}))))
 
-
-
-(defn- filter-matching
-  "Filter a list of potential routes to return only those that can handle the request.
-
-   A route can handle a request if:
+(defn- matches?
+  "A route can handle a request if:
   (1) the route's method matches the request method (or the route has method: :any),
   (2) the route's url matches the request's url (according to clout)"
-  [routes request]
-  (->> routes
-       (filter (fn [{:keys [method matcher]}]
-                 (and
-                   (or
-                     (= method :any)
-                     (= method (request :request-method)))
-                   (clout/route-matches matcher request))))))
+  [request {:keys [method matcher]}]
+  (and
+    (or
+      (= method :any)
+      (= method (request :request-method)))
+    (clout/route-matches matcher request)))
 
 (defn- dispatch
   "Given a list of routes, return the result of the first which returns a truthy value"
-  [routes request]
+  [request routes]
   (->> routes
        (some (fn [route]
                (let [handler-fn (route :handler-fn)
                      params (clout/route-matches (route :matcher) request)]
                  (handler-fn (update request :params merge params)))))))
 
+(defn- ->static-handler
+  [route-defs]
+  (let [routes (prepare-routes route-defs)]
+    (fn [request]
+      (->> routes
+           (filter (fn [route-meta]
+                     (matches? request route-meta)))
+           (dispatch request)))))
+
+(defn- ->dynamic-handler
+  [route-defs-var]
+  (fn [request]
+    ((->static-handler (var-get route-defs-var)) request)))
+
 (defn ->handler
-  "Given an list of pattern - handler pairs (see example below), returns a ring handler.
+  "Given a list of route definitions (pattern - handler pairs, see example below),
+   or a var of such, returns a ring handler.
 
    Given a request, the handler will return a response from the first route that:
      (1) matches the method (:any is allowed),
@@ -63,6 +72,10 @@
      (3) returns a truthy value
 
    URL pattern matching is done with the clout library (ie. same as compojure).
+
+   If the supplied route definitions are a var, the returned handler will re-parse
+   the route definitions each request. This useful in development,
+   but not recommended in production.
 
    [
      [
@@ -74,12 +87,10 @@
      ]
      ...
    ]"
-  [input-routes]
-  (let [routes (prepare-routes input-routes)]
-    (fn [request]
-      (-> routes
-          (filter-matching request)
-          (dispatch request)))))
+  [route-defs]
+  (if (var? route-defs)
+    (->dynamic-handler route-defs)
+    (->static-handler route-defs)))
 
 (defn combine
   "Combine multiple ring handlers"
