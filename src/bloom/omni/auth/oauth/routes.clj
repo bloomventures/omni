@@ -1,9 +1,9 @@
-(ns bloom.omni.auth.routes
+(ns bloom.omni.auth.oauth.routes
   (:require
-    [bloom.omni.auth.google :as oauth]
+    [bloom.omni.auth.oauth.google :as oauth]
     [bloom.omni.impl.ring :as ring]))
 
-(defn routes [config]
+(defn routes [oauth-config]
   [
    [[:get "/api/auth/user"]
     (fn [request]
@@ -16,7 +16,7 @@
     (fn [_]
       {:status 302
        :body {:ok true}
-       :headers {"Location" (oauth/request-token-url config)}})]
+       :headers {"Location" (oauth/request-token-url oauth-config)}})]
 
    [[:get "/api/auth/post-auth"]
     (fn [_]
@@ -27,7 +27,7 @@
    [[:put "/api/auth/authenticate"]
     (fn [request]
       (let [token (get-in request [:params :token])]
-        (if-let [user (oauth/get-user-info config token)]
+        (if-let [user (oauth/get-user-info oauth-config token)]
           {:status 200
            :body {:user {:id (user :id)}}
            :session {:user-id (user :id)}}

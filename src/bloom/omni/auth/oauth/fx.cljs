@@ -1,4 +1,4 @@
-(ns bloom.omni.auth.fx
+(ns bloom.omni.auth.oauth.fx
   (:refer-clojure :exclude [get])
   (:require
     [re-frame.db :refer [app-db]]
@@ -23,7 +23,7 @@
                  :user user})
        ((db-get :after-login-fn) user))}))
 
-(defn- check-authentication! 
+(defn- check-authentication!
   [after-fn]
   (ajax/fx
     {:method :get
@@ -35,7 +35,7 @@
 
 (defn- attach-message-listener! []
   (when-not (db-get :message-handler-attached?)
-    (js/window.addEventListener "message" 
+    (js/window.addEventListener "message"
                                 (fn [e]
                                   (let [token (.-data e)]
                                     (remote-oauth! token))))
@@ -48,7 +48,7 @@
             :message-handler-attached? false})
   (check-authentication! after-fn))
 
-(defn- log-in! 
+(defn- log-in!
   [after-fn]
   (db-set! {:authenticating? true
             :after-login-fn after-fn})
@@ -62,7 +62,7 @@
   (ajax/fx
     {:uri "/api/auth"
      :method :delete
-     :on-success 
+     :on-success
      (fn [_]
        (db-set! {:user nil})
        (after-fn))}))
@@ -74,7 +74,7 @@
     :log-out! (log-out! opt)))
 
 ; usage:
-; (require [bloom.omni.auth :as auth])
+; (require [bloom.omni.auth.oauth.fx :as auth])
 ; (auth/register)
 
 ; effects in events:
@@ -96,7 +96,7 @@
   (case k
     :logged-in? (boolean (get-in db [:omni/auth :user]))
     :user (get-in db [:omni/auth :user])
-    :state (cond 
+    :state (cond
              (get-in db [:omni/auth :authenticating?])
              :authenticating
              (get-in db [:omni/auth :user])

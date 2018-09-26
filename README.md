@@ -78,8 +78,8 @@ Conventions:
 Add the following `config.edn`:
 
 ```
-{:omni/auth {:google {:client-id "key-from-google"
-                      :domain "http://localhost:1234"}}}
+{:omni/auth {:oauth {:google {:client-id "key-from-google"
+                              :domain "http://localhost:1234"}}}}
 ```
 
 In prod, pass the following env vars:
@@ -89,7 +89,7 @@ CLIENT_ID="key-from-google"
 DOMAIN="https://domain.in.prod.com"
 ```
 
-See `bloom.omni.auth/fx` for re-frame helpers.
+See `bloom.omni.auth.oauth.fx` for re-frame helpers.
 
 ## Other helper namespaces:
 

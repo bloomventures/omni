@@ -6,7 +6,7 @@
     [bloom.omni.impl.port :as port]
     [bloom.omni.impl.ring :as ring]
     [bloom.omni.impl.middleware :as middleware]
-    [bloom.omni.auth.routes :as auth.routes]
+    [bloom.omni.auth.oauth.routes :as oauth.routes]
     [bloom.omni.spa :as spa]
     [bloom.omni.impl.config :as config]))
 
@@ -21,8 +21,8 @@
                 {:port (or (config :omni/http-port)
                            (port/next-available))
                  :handler (ring/combine
-                            (->> [(when (config :omni/auth)
-                                    (-> (ring/->handler (auth.routes/routes config))
+                            (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
+                                    (-> (ring/->handler (oauth.routes/routes oauth-config))
                                         api-middleware))
                                   (ring/->handler
                                     (if (= :prod (config :omni/environment))
