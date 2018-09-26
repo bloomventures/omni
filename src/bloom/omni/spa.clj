@@ -9,7 +9,7 @@
     [hiccup.core :refer [html]]
     [ring.util.response :as ring.response]
     [ring.util.mime-type :as ring.mime]
-    [bloom.omni.impl.digest :as digest]))
+    [bloom.omni.impl.crypto :as crypto]))
 
 (defn- index-page [config]
   [:html
@@ -19,8 +19,8 @@
     [:meta {:name "viewport"
             :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
     (when (get-in config [:omni/css])
-      (let [digest (digest/from-file (io/resource "public/css/styles.css"))
-            digest-gz (digest/from-file (io/resource "public/css/styles.css.gz"))]
+      (let [digest (crypto/sha256-file (io/resource "public/css/styles.css"))
+            digest-gz (crypto/sha256-file (io/resource "public/css/styles.css.gz"))]
         [:link {:rel "stylesheet"
                 :href (str "/css/styles.css?v=" digest)
                 :media "screen"
@@ -35,8 +35,8 @@
         "This app requires Javascript. Please enable Javascript in your browser."]]
       [:script {:type "text/javascript"}
        "document.getElementById('message').outerHTML= '';"]
-      (let [digest (digest/from-file (io/resource "public/js/app.js"))
-            digest-gz (digest/from-file (io/resource "public/js/app.js.gz"))]
+      (let [digest (crypto/sha256-file (io/resource "public/js/app.js"))
+            digest-gz (crypto/sha256-file (io/resource "public/js/app.js.gz"))]
         [:script {:type "text/javascript"
                   :src (str "/js/app.js?v=" digest)
                   :crossorigin "anonymous"
