@@ -2,10 +2,11 @@
   (:require
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.middleware.session.cookie :refer [cookie-store]]
-    [ring.middleware.defaults :refer [wrap-defaults]]))
+    [ring.middleware.defaults :refer [wrap-defaults]]
+    [bloom.omni.auth.token :as auth.token]))
 
 (defn defaults-config
-  [{:keys [production? session? cookie-name cookie-secret]}]
+  [{:keys [production? session? cookie-secret cookie-name]}]
   (when (and production? session? (nil? cookie-secret))
     (throw (Exception. (str "Must set a cookie-secret in production."))))
   (-> {:proxy production?
@@ -28,13 +29,19 @@
                                          :same-site :strict
                                          :max-age (* 60 60 24 365)}}}))))
 
-(defn api
+(defn make-api-middleware
   "Returns API defaults middleware"
-  [{:keys [production? session? cookie-secret cookie-name]}]
+  [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
   (fn [handler]
     (-> handler
-        (wrap-defaults (defaults-config {:production? production?
-                                         :session? session?
-                                         :cookie-secret cookie-secret
-                                         :cookie-name cookie-name}))
+        (wrap-defaults (defaults-config opts))
         (wrap-restful-format :formats [:json :edn :yaml :transit-json]))))
+
+(defn make-spa-middleware
+  [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
+  (fn [handler]
+    (-> handler
+        ((if token-secret
+           (auth.token/make-token-auth-middleware token-secret)
+           identity))
+        (wrap-defaults (defaults-config opts)))))

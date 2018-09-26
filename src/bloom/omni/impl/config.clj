@@ -23,13 +23,14 @@
             (ds/opt :omni/cljs) {:main string?}
             (ds/opt :omni/http-port) integer?
             (ds/opt :omni/environment) keyword?
-            (ds/opt :omni/auth) {(ds/opt :cookie-secret) (fn [s]
-                                                           (and
-                                                             (string? s)
-                                                             (= 16 (count s))))
-                                 (ds/opt :cookie-name) string?
-                                 (ds/opt :google) {:client-id string?
-                                                   :domain string?}}
+            (ds/opt :omni/auth) {(ds/opt :cookie) {:secret (fn [s]
+                                                             (and
+                                                               (string? s)
+                                                               (= 16 (count s))))
+                                                   :name string?}
+                                 (ds/opt :token) {:secret string?}
+                                 (ds/opt :oauth) {:google {:client-id string?
+                                                           :domain string?}}}
             (ds/opt :omni/api-routes) var?}}))
 
 (defn- config-from-env []

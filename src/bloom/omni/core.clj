@@ -12,26 +12,26 @@
 
 (def http-server
   {:start (fn [config]
-            (let [api-middleware
-                  (middleware/api {:production? (= :prod (config :omni/environment))
-                                   :session? (boolean (config :omni/auth))
-                                   :cookie-secret (get-in config [:omni/auth :cookie-secret])
-                                   :cookie-name (get-in config [:omni/auth :cookie-name])})]
+            (let [middleware-config {:production? (= :prod (config :omni/environment))
+                                     :session? (boolean (config :omni/auth :cookie))
+                                     :token-secret (get-in config [:omni/auth :token :secret])
+                                     :cookie-secret (get-in config [:omni/auth :cookie :secret])
+                                     :cookie-name (get-in config [:omni/auth :cookie :name])}]
               (http-server/start!
                 {:port (or (config :omni/http-port)
                            (port/next-available))
-                 :handler (ring/combine
-                            (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
-                                    (-> (ring/->handler (oauth.routes/routes oauth-config))
-                                        api-middleware))
-                                  (ring/->handler
-                                    (if (= :prod (config :omni/environment))
-                                      (var-get (config :omni/api-routes))
-                                      (config :omni/api-routes)))]
-                                 (remove nil?)
-                                 (apply ring/combine)
-                                 api-middleware)
-                            (ring/->handler (spa/routes config)))})))
+                 :handler (->> (ring/combine
+                                 (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
+                                         (ring/->handler (oauth.routes/routes oauth-config)))
+                                       (ring/->handler
+                                         (if (= :prod (config :omni/environment))
+                                           (var-get (config :omni/api-routes))
+                                           (config :omni/api-routes)))]
+                                      (remove nil?)
+                                      (apply ring/combine)
+                                      ((middleware/make-api-middleware middleware-config)))
+                                 (->> (ring/->handler (spa/routes config))
+                                      ((middleware/make-spa-middleware middleware-config)))))})))
    :stop (fn [self]
            (http-server/stop! self))})
 

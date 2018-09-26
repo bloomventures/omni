@@ -46,7 +46,7 @@
   [expiry]
   (java-time/before? (java-time/instant) (java-time/instant expiry)))
 
-(defn token-auth-middleware
+(defn make-token-auth-middleware
   [secret]
   (fn [handler]
     (fn [request]
