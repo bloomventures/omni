@@ -7,8 +7,10 @@
 
 (defn compile-css [{:keys [pretty-print? styles]}]
   (require (symbol (namespace (keyword styles))) :reload)
-  (garden/css 
-    {:pretty-print? pretty-print?}
+  (garden/css
+    {:pretty-print? pretty-print?
+     :vendors ["webkit" "moz" "ms"]
+     :auto-prefix #{:user-select}}
     ((var-get (find-var (symbol styles))))))
 
 (defn compile! [{:keys [output-to] :as css-config}]
