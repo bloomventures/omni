@@ -46,9 +46,9 @@
               (when-let [cookie-secret (env :cookie-secret)]
                 {:omni/auth {:cookie {:secret cookie-secret}}})
               (when-let [domain (env :domain)]
-                {:omni/auth {:google {:domain domain}}})
+                {:omni/auth {:oauth {:google {:domain domain}}}})
               (when-let [client-id (env :client-id)]
-                {:omni/auth {:google {:client-id client-id}}})))
+                {:omni/auth {:oauth {:google {:client-id client-id}}}})))
 
 (defn- config-from-file []
   (let [path "config.edn"]
