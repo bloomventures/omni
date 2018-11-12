@@ -5,7 +5,7 @@
     [cognitect.transit :as transit]))
 
 (defn fx
-  [{:keys [uri method params body format on-success on-error headers]
+  [{:keys [uri method params body format on-success on-error headers timeout]
     :or {format (ajax/transit-request-format)
          on-success identity
          on-error (fn [r]
@@ -17,6 +17,7 @@
        :body body
        :params params
        :headers headers
+       :timeout timeout
        :handler
        (fn [[ok response]]
          (if ok
