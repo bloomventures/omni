@@ -45,6 +45,8 @@
                 {:omni/environment environment})
               (when-let [cookie-secret (env :cookie-secret)]
                 {:omni/auth {:cookie {:secret cookie-secret}}})
+              (when-let [token-secret (env :token-secret)]
+                {:omni/auth {:token {:secret token-secret}}})
               (when-let [domain (env :domain)]
                 {:omni/auth {:oauth {:google {:domain domain}}}})
               (when-let [client-id (env :client-id)]
