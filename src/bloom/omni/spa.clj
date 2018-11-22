@@ -59,11 +59,16 @@
 
 (defn routes [config]
   [[[:get "/js/app.js"]
-    (fn [_]
-      (some-> (resource-response "public/js/app.js")
-              (assoc-in
-                [:headers "Cache-Control"]
-                "max-age=365000000, immutable")))]
+    (fn [req]
+      (let [resource-etag (crypto/sha256-file (io/resource "public/js/app.js"))]
+        (if (some-> (get-in req [:headers "if-none-match"])
+                    (= resource-etag))
+          {:status 304}
+          (some-> (resource-response "public/js/app.js")
+                  (assoc-in
+                    [:headers "Cache-Control"]
+                    "max-age=365000000, immutable")
+                  (assoc-in [:headers "ETag"] resource-etag)))))]
 
    [[:get "/*"]
     (fn [r]
