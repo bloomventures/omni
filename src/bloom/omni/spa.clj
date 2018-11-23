@@ -18,6 +18,8 @@
       [:title title])
     [:meta {:name "viewport"
             :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
+    (when (io/resource "public/manifest.webmanifest")
+      [:link {:rel "manifest" :href "/manifest.webmanifest"}])
     (when (get-in config [:omni/css])
       (let [digest (crypto/sha256-file (io/resource "public/css/styles.css"))
             digest-gz (crypto/sha256-file (io/resource "public/css/styles.css.gz"))]
