@@ -10,6 +10,7 @@
                :asset-path "/js/dev"
                :output-dir "resources/public/js/dev"
                :closure-defines {"goog.DEBUG" true}
+               :parallel-build true
                :verbose true}}
    {:id "prod"
     :source-paths ["src"]
@@ -17,4 +18,8 @@
                :output-to "resources/public/js/app.js"
                :output-dir "target/cljs-prod"
                :closure-defines {"goog.DEBUG" false}
-               :optimizations :advanced}}])
+               :optimizations :advanced
+               :parallel-build true
+               :infer-externs true
+               :static-fns true
+               :fn-invoke-direct true}}])
