@@ -13,7 +13,7 @@
 (def http-server
   {:start (fn [config]
             (let [middleware-config {:production? (= :prod (config :omni/environment))
-                                     :session? (boolean (config :omni/auth :cookie))
+                                     :session? (boolean (get-in config [:omni/auth :cookie]))
                                      :token-secret (get-in config [:omni/auth :token :secret])
                                      :cookie-secret (get-in config [:omni/auth :cookie :secret])
                                      :cookie-name (get-in config [:omni/auth :cookie :name])}]
