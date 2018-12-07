@@ -47,7 +47,12 @@
                                   (map (fn [d] (str "sha256-" d)))
                                   (string/join " "))}])
       [:script {:type "text/javascript"}
-       (str (string/replace (get-in config [:omni/cljs :main]) #"-" "_") ".init();")]])])
+       (str (string/replace (get-in config [:omni/cljs :main]) #"-" "_") ".init();")]])
+   (for [script (get-in config [:omni/js-scripts])]
+     [:script {:type "text/javascript"
+               :src (script :src)
+               :defer (script :defer)
+               :async (script :async)}])])
 
 (defn- add-mime-type [response path]
   (if-let [mime-type (ring.mime/ext-mime-type path)]
