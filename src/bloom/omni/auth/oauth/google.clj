@@ -37,7 +37,7 @@
                        :url (str "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" token)})
                    :body
                    (json/read-str :key-fn keyword))]
-      {:id (resp :email)
+      {:id (resp :id)
        :name (resp :name)
        :email (resp :email)
        :avatar (resp :picture)})))

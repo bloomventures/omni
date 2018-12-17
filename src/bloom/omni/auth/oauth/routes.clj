@@ -9,7 +9,9 @@
     (fn [request]
       {:status 200
        :body (if-let [user-id (get-in request [:session :user-id])]
-               {:user {:id user-id}}
+               (let [get-user (or (oauth-config :get-user-fn)
+                                  (fn [user-id] {:id user-id}))]
+                 {:user (get-user user-id)})
                {:user nil})})]
 
    [[:get "/api/auth/request-token"]
@@ -28,9 +30,14 @@
     (fn [request]
       (let [token (get-in request [:params :token])]
         (if-let [user (oauth/get-user-info oauth-config token)]
-          {:status 200
-           :body {:user {:id (user :id)}}
-           :session {:user-id (user :id)}}
+          (let [post-auth! (or (oauth-config :post-auth-fn)
+                              (fn [user]))
+                get-user (or (oauth-config :get-user-fn)
+                             (fn [user-id] {:id user-id}))]
+            (post-auth! user)
+            {:status 200
+             :body {:user (get-user (user :id))}
+             :session {:user-id (user :id)}})
           {:status 401
            :body {:error "User could not be authenticated"}})))]
 

@@ -32,7 +32,9 @@
                                                    (ds/opt :name) string?}
                                  (ds/opt :token) {:secret string?}
                                  (ds/opt :oauth) {:google {:client-id string?
-                                                           :domain string?}}}
+                                                           :domain string?}}
+                                 (ds/opt :post-auth-fn) fn?
+                                 (ds/opt :get-user-fn) fn?}
             (ds/opt :omni/api-routes) var?}}))
 
 (defn- config-from-env []
