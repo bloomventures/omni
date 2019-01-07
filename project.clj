@@ -12,7 +12,7 @@
                  [garden "1.3.4"] ; impl.cssbuild
                  [hawk "0.2.11"] ; css-watcher
                  [hiccup "1.0.5"] ; spa, auth.google
-                 [http-kit "2.2.0"] ; http-server
+                 [http-kit "2.3.0"] ; http-server
                  [metosin/spec-tools "0.6.1"] ; config
                  [org.clojure/core.async "0.4.474"] ; impl.async
                  [ring/ring-core "1.6.3"] ; spa
