@@ -18,7 +18,7 @@
                  [ring/ring-core "1.6.3"] ; spa
                  [ring/ring-defaults "0.3.1"] ; ring
                  [ring-middleware-format "0.7.2"] ; ring
-                 [secretary "1.2.3"] ; fx.router
+                 [clj-commons/secretary "1.2.4"] ; fx.router
                  [venantius/accountant "0.2.4"] ; fx.router
 
                  [leiningen-core "2.8.1"]
