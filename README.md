@@ -97,8 +97,6 @@ See `bloom.omni.auth.oauth.fx` for re-frame helpers.
 
 ### env
 
-### uuid
-
 ### fx/ajax
 
 ### fx/dispatch-debounce
