@@ -52,7 +52,8 @@
      [:script {:type "text/javascript"
                :src (script :src)
                :defer (script :defer)
-               :async (script :async)}])])
+               :async (script :async)}
+      (script :body)])])
 
 (defn- add-mime-type [response path]
   (if-let [mime-type (ring.mime/ext-mime-type path)]
