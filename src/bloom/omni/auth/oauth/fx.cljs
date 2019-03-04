@@ -12,17 +12,6 @@
 (defn- db-get [k]
   (get-in @app-db [:omni/auth k]))
 
-(defn- remote-oauth! [token]
-  (ajax/fx
-    {:method :put
-     :uri "/api/auth/authenticate"
-     :params {:token token}
-     :on-success
-     (fn [{:keys [user]}]
-       (db-set! {:authenticating? false
-                 :user user})
-       ((db-get :after-login-fn) user))}))
-
 (defn- check-authentication!
   [after-fn]
   (ajax/fx
@@ -32,6 +21,18 @@
      (fn [{:keys [user]}]
        (db-set! {:user user})
        (after-fn user))}))
+
+(defn- remote-oauth! [token]
+  (ajax/fx
+    {:method :put
+     :uri "/api/auth/authenticate"
+     :params {:token token}
+     :on-success
+     (fn [_]
+       (check-authentication!
+         (fn [user]
+           (db-set! {:authenticating? false})
+           ((db-get :after-login-fn) user))))}))
 
 (defn- attach-message-listener! []
   (when-not (db-get :message-handler-attached?)

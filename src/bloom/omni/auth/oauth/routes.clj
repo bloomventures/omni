@@ -8,10 +8,10 @@
    [[:get "/api/auth/user"]
     (fn [request]
       {:status 200
-       :body (if-let [user-id (get-in request [:session :user-id])]
-               (let [get-user (or (oauth-config :get-user-fn)
-                                  (fn [user-id] {:id user-id}))]
-                 {:user (get-user user-id)})
+       :body (if-let [session-id (get-in request [:session :id])]
+               (let [user-from-session-id (or (oauth-config :user-from-session-id)
+                                              (fn [session-id] {:id session-id}))]
+                 {:user (user-from-session-id session-id)})
                {:user nil})})]
 
    [[:get "/api/auth/request-token"]
@@ -29,15 +29,15 @@
    [[:put "/api/auth/authenticate"]
     (fn [request]
       (let [token (get-in request [:params :token])]
-        (if-let [user (oauth/get-user-info oauth-config token)]
+        (if-let [user-info (oauth/get-user-info oauth-config token)]
           (let [post-auth! (or (oauth-config :post-auth-fn)
-                              (fn [user]))
-                get-user (or (oauth-config :get-user-fn)
-                             (fn [user-id] {:id user-id}))]
-            (post-auth! user)
+                               (fn [user]))
+                user-to-session-id (or (oauth-config :user-to-session-id)
+                                       :id)]
+            (post-auth! user-info)
             {:status 200
-             :body {:user (get-user (user :id))}
-             :session {:user-id (user :id)}})
+             :body {:ok true}
+             :session {:id (user-to-session-id user-info)}})
           {:status 401
            :body {:error "User could not be authenticated"}})))]
 
