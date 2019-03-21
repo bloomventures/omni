@@ -20,7 +20,8 @@
     {:name :omni/config
      :spec {(ds/opt :omni/title) string?
             (ds/opt :omni/css) {:styles string?}
-            (ds/opt :omni/cljs) {:main string?}
+            (ds/opt :omni/cljs) {:main string?
+                                 (ds/opt :externs) [string?]}
             (ds/opt :omni/http-port) integer?
             (ds/opt :omni/environment) keyword?
             (ds/opt :omni/auth) {(ds/opt :cookie) {;; a temporary one is used in dev

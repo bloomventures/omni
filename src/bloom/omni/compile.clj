@@ -23,7 +23,7 @@
 
 (defn compile-js! [config]
   (when (config :omni/cljs)
-    (let [prod-build (->> (builds (get-in config [:omni/cljs :main]))
+    (let [prod-build (->> (builds (config :omni/cljs))
                           (filter (fn [b]
                                     (= "prod" (b :id))))
                           first)

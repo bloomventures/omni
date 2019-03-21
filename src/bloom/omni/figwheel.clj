@@ -10,12 +10,12 @@
     [figwheel-sidecar.repl-api :as repl-api]
     [bloom.omni.impl.builds :refer [builds]]))
 
-(defn start! [{:keys [cljs-main server-port]}]
+(defn start! [{:keys [cljs-opts server-port]}]
   (repl-api/start-figwheel!
     {:figwheel-options {:server-port server-port
                         :css-dirs ["resources/public/css"]}
      :build-ids ["dev"]
-     :all-builds (builds cljs-main)}))
+     :all-builds (builds cljs-opts)}))
 
 (defn stop! []
   (repl-api/stop-figwheel!))

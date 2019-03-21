@@ -48,7 +48,7 @@
   {:start (fn [config]
             (when (config :omni/cljs)
               (figwheel/start! {:server-port (port/next-available)
-                                :cljs-main (get-in config [:omni/cljs :main])})))
+                                :cljs-opts (config :omni/cljs)})))
    :stop (fn [self]
            (figwheel/stop!))})
 

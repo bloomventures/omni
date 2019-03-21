@@ -1,6 +1,6 @@
 (ns bloom.omni.impl.builds)
 
-(defn builds [main]
+(defn builds [{:keys [main externs]}]
   [{:id "dev"
     :figwheel {:on-jsload (str main "/reload")
                :websocket-host :js-client-host}
@@ -21,5 +21,6 @@
                :optimizations :advanced
                :parallel-build true
                :infer-externs true
+               :externs externs
                :static-fns true
                :fn-invoke-direct true}}])
