@@ -38,8 +38,9 @@
   (when-not (db-get :message-handler-attached?)
     (js/window.addEventListener "message"
                                 (fn [e]
-                                  (let [token (.-data e)]
-                                    (remote-oauth! token))))
+                                  (when (= (.-origin e) (.. js/window -location -origin))
+                                    (let [token (.-data e)]
+                                      (remote-oauth! token)))))
     (db-set! {:message-handler-attached? true})))
 
 (defn- init! [after-fn]
