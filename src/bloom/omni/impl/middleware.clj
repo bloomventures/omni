@@ -26,7 +26,6 @@
                           :cookie-name (or cookie-name "omni-app")
                           :cookie-attrs {:secure production?
                                          :http-only true
-                                         :same-site :strict
                                          :max-age (* 60 60 24 365)}}}))))
 
 (defn make-api-middleware
