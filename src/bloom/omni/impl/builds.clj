@@ -14,13 +14,14 @@
                :verbose true}}
    {:id "prod"
     :source-paths ["src"]
-    :compiler {:main main
-               :output-to "resources/public/js/app.js"
-               :output-dir "target/cljs-prod"
-               :closure-defines {"goog.DEBUG" false}
-               :optimizations :advanced
-               :parallel-build true
-               :infer-externs true
-               :externs externs
-               :static-fns true
-               :fn-invoke-direct true}}])
+    :compiler (merge {:main main
+                      :output-to "resources/public/js/app.js"
+                      :output-dir "target/cljs-prod"
+                      :closure-defines {"goog.DEBUG" false}
+                      :optimizations :advanced
+                      :parallel-build true
+                      :infer-externs true
+                      :static-fns true
+                      :fn-invoke-direct true}
+                     (when externs
+                       {:externs externs}))}])
