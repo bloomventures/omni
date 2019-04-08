@@ -5,14 +5,15 @@
     [cognitect.transit :as transit]))
 
 (defn fx
-  [{:keys [uri method params body format on-success on-error headers timeout response-format]
+  [{:keys [uri method params body format on-success on-error headers timeout response-format credentials?]
     :or {format (ajax/transit-request-format)
          response-format (ajax/transit-response-format
                            {:type :json
                             :reader (transit/reader :json {:handlers {"u" uuid}})})
          on-success identity
          on-error (fn [r]
-                    (.error js/console "Ajax request error" (pr-str r)))}}]
+                    (.error js/console "Ajax request error" (pr-str r)))
+         credentials? false}}]
   (let [request-id (gensym uri)]
     (ajax/ajax-request
       {:uri uri
@@ -27,4 +28,5 @@
            (on-success response)
            (on-error response)))
        :format format
-       :response-format response-format})))
+       :response-format response-format
+       :with-credentials credentials?})))
