@@ -1,6 +1,6 @@
 (defproject io.bloomventures/omni "0.20.3-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946"]
+                 [org.clojure/clojurescript "1.10.520"]
 
                  [com.cognitect/transit-cljs "0.8.243"] ; fx.ajax
                  [cljsbuild "1.1.7" :exclude [org.clojure/clojure]] ; figwheel
