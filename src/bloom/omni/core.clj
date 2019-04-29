@@ -16,7 +16,8 @@
                                      :session? (boolean (get-in config [:omni/auth :cookie]))
                                      :token-secret (get-in config [:omni/auth :token :secret])
                                      :cookie-secret (get-in config [:omni/auth :cookie :secret])
-                                     :cookie-name (get-in config [:omni/auth :cookie :name])}]
+                                     :cookie-name (get-in config [:omni/auth :cookie :name])
+                                     :cookie-same-site (get-in config [:omni/auth :cookie :same-site])}]
               (http-server/start!
                 {:port (or (config :omni/http-port)
                            (port/next-available))

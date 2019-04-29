@@ -6,7 +6,7 @@
     [bloom.omni.auth.token :as auth.token]))
 
 (defn defaults-config
-  [{:keys [production? session? cookie-secret cookie-name]}]
+  [{:keys [production? session? cookie-secret cookie-name cookie-same-site]}]
   (when (and production? session? (nil? cookie-secret))
     (throw (Exception. (str "Must set a cookie-secret in production."))))
   (-> {:proxy production?
@@ -26,6 +26,7 @@
                           :cookie-name (or cookie-name "omni-app")
                           :cookie-attrs {:secure production?
                                          :http-only true
+                                         :same-site (or cookie-same-site :strict)
                                          :max-age (* 60 60 24 365)}}}))))
 
 (defn make-api-middleware
