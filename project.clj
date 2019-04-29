@@ -17,7 +17,7 @@
                  [org.clojure/core.async "0.4.474"] ; impl.async
                  [ring/ring-core "1.6.3"] ; spa
                  [ring/ring-defaults "0.3.1"] ; ring
-                 [ring-middleware-format "0.7.2"] ; ring
+                 [ring-middleware-format "0.7.4"] ; ring
                  [clj-commons/secretary "1.2.4"] ; fx.router
                  [venantius/accountant "0.2.4"] ; fx.router
 
