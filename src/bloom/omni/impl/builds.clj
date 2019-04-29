@@ -2,8 +2,10 @@
 
 (defn builds [{:keys [main externs]}]
   [{:id "dev"
-    :figwheel {:on-jsload (str main "/reload")
-               :websocket-host :js-client-host}
+    :figwheel {:websocket-host :js-client-host
+               :mode :serve
+               :open-url false
+               :watch-dirs ["src"]}
     :source-paths ["src"]
     :compiler {:main main
                :output-to "resources/public/js/app.js"

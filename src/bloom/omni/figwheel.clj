@@ -7,15 +7,16 @@
                     :cljs {:main \"app.core\"}})
   ```"
   (:require
-    [figwheel-sidecar.repl-api :as repl-api]
+    [figwheel.main.api :as repl-api]
     [bloom.omni.impl.builds :refer [builds]]))
 
 (defn start! [{:keys [cljs-opts server-port]}]
-  (repl-api/start-figwheel!
-    {:figwheel-options {:server-port server-port
-                        :css-dirs ["resources/public/css"]}
-     :build-ids ["dev"]
-     :all-builds (builds cljs-opts)}))
+  (let [[build] (filter #(= "dev" (:id %)) (builds cljs-opts))]
+    (repl-api/start
+      {:id (:id build)
+       :options (:compiler build)
+       :config (assoc (:figwheel build)
+                      :ring-server-options {:port server-port})})))
 
 (defn stop! []
-  (repl-api/stop-figwheel!))
+  (repl-api/stop-all))
