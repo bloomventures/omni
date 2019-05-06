@@ -24,10 +24,14 @@
                {:cookies true
                 :session {:store (cookie-store {:key (or cookie-secret "dev-only-secret!")})
                           :cookie-name (or cookie-name "omni-app")
-                          :cookie-attrs {:secure production?
-                                         :http-only true
-                                         :same-site (or cookie-same-site :strict)
-                                         :max-age (* 60 60 24 365)}}}))))
+                          :cookie-attrs (merge
+                                          {:secure production?
+                                           :http-only true
+                                           :max-age (* 60 60 24 365)}
+                                          ;; We need the ability to omit same-site
+                                          ;; attribute completely since lax != omitted!
+                                          (when (not= false cookie-same-site)
+                                            :same-site (or cookie-same-site :strict)))}}))))
 
 (defn make-api-middleware
   "Returns API defaults middleware"
