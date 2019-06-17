@@ -1,4 +1,4 @@
-(defproject io.bloomventures/omni "0.21.2-SNAPSHOT"
+(defproject io.bloomventures/omni "0.21.2"
   :dependencies [; Overrides
                  [org.clojure/tools.reader "1.3.2"]
                  [com.cognitect/transit-clj "0.8.313"]
