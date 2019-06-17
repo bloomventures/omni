@@ -31,7 +31,7 @@
                                           ;; We need the ability to omit same-site
                                           ;; attribute completely since lax != omitted!
                                           (when (not= false cookie-same-site)
-                                            :same-site (or cookie-same-site :strict)))}}))))
+                                            {:same-site (or cookie-same-site :strict)}))}}))))
 
 (defn make-api-middleware
   "Returns API defaults middleware"
