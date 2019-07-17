@@ -10,7 +10,7 @@
     [:html
      [:body
       [:script
-       "var token = decodeURIComponent(window.location.toString().match(/access_token=(.*)&/, '')[1]);"
+       "var token = decodeURIComponent(window.location.toString().match(/access_token=(.*?)&/, '')[1]);"
        "window.opener.postMessage(token, window.location);"
        "window.close();"]]]))
 
