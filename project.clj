@@ -1,4 +1,4 @@
-(defproject io.bloomventures/omni "0.21.3"
+(defproject io.bloomventures/omni :lein-v
   :dependencies [; Overrides
                  [org.clojure/tools.reader "1.3.2"]
                  [com.cognitect/transit-clj "0.8.313"]
@@ -31,5 +31,14 @@
                  [clj-commons/secretary "1.2.4"] ; fx.router
                  [venantius/accountant "0.2.4"] ; fx.router
 
-                 [leiningen-core "2.9.0"]
-                 ])
+                 [leiningen-core "2.9.0"]]
+
+  :plugins [[com.roomkey/lein-v "7.1.0"]]
+
+  ;; run 'lein release :minor' for breaking changes
+  ;; run 'lein release :path' for non-breaking changes
+  :release-tasks [["vcs" "assert-committed"]
+                  ["v" "update"]
+                  ["vcs" "push"]
+                  ["deploy" "clojars"]]
+  )
