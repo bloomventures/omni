@@ -50,7 +50,14 @@
   [secret]
   (fn [handler]
     (fn [request]
-      (let [{:strs [user-id expiry mac]} (request :query-params)]
+      (let [{:strs [user-id expiry mac]} (request :query-params)
+            target-url (let [query-str (map->query-str (dissoc (request :query-params)
+                                                               "user-id"
+                                                               "expiry"
+                                                               "mac"))]
+                         (str (request :uri)
+                              (when-not (string/blank? query-str)
+                                (str "?" query-str))))]
         (cond
           (not (and user-id expiry mac))
           (handler request)
@@ -60,20 +67,16 @@
                                     :mac mac}
                                    secret))
           {:status 400
-           :body "Token has been tampered with"}
+           :headers {"Content-Type" "text/plain"}
+           :body "Login link has been tampered with."}
 
           (not (verify-request-expiry (Long. expiry)))
-          {:status 400
-           :body "Token has expired"}
+          {:status 403
+           :headers {"Content-Type" "text/html"}
+           :body (str "Your login link has expired. Redirecting... <script>setTimeout(function(){ window.location = '" target-url "';}, 2000)</script>")}
 
           :else
           {:session {:user-id (java.util.UUID/fromString user-id)}
            :status 302
-           :headers {"Location" (let [query-str (map->query-str (dissoc (request :query-params)
-                                                                        "user-id"
-                                                                        "expiry"
-                                                                        "mac"))]
-                                  (str (request :uri)
-                                       (when-not (string/blank? query-str)
-                                         (str "?" query-str))))}})))))
+           :headers {"Location" target-url}})))))
 
