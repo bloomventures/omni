@@ -23,7 +23,7 @@
 (defn- generate-login-token
   [user-id secret]
   (let [expiry (java-time/to-millis-from-epoch
-                 (java-time/plus (java-time/instant) (java-time/weeks 1)))]
+                 (java-time/plus (java-time/instant) (java-time/weeks 2)))]
     {:user-id user-id
      :expiry expiry
      :mac (->> (str user-id expiry)
