@@ -5,7 +5,8 @@
     :figwheel {:websocket-host :js-client-host
                :mode :serve
                :open-url false
-               :watch-dirs ["src"]}
+               :watch-dirs ["src"]
+               :css-dirs ["resources/public/css"]}
     :source-paths ["src"]
     :compiler {:main main
                :output-to "resources/public/js/app.js"
