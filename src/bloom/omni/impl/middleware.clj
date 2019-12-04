@@ -1,6 +1,6 @@
 (ns bloom.omni.impl.middleware
   (:require
-    [ring.middleware.format :refer [wrap-restful-format]]
+    [muuntaja.middleware :refer [wrap-format]]
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.middleware.defaults :refer [wrap-defaults]]
     [bloom.omni.auth.token :as auth.token]))
@@ -39,7 +39,7 @@
   (fn [handler]
     (-> handler
         (wrap-defaults (defaults-config opts))
-        (wrap-restful-format :formats [:json :edn :yaml :transit-json]))))
+        (wrap-format))))
 
 (defn make-spa-middleware
   [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
