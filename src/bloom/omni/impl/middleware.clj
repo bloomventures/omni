@@ -38,8 +38,8 @@
   [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
   (fn [handler]
     (-> handler
-        (wrap-defaults (defaults-config opts))
-        (wrap-format))))
+        (wrap-format)
+        (wrap-defaults (defaults-config opts)))))
 
 (defn make-spa-middleware
   [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
