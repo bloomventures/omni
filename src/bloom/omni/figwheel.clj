@@ -10,8 +10,8 @@
     [figwheel.main.api :as repl-api]
     [bloom.omni.impl.builds :refer [builds]]))
 
-(defn start! [{:keys [cljs-opts server-port]}]
-  (let [[build] (filter #(= "dev" (:id %)) (builds cljs-opts))]
+(defn start! [{:keys [cljs-opts server-port css?]}]
+  (let [[build] (filter #(= "dev" (:id %)) (builds (assoc cljs-opts :css? css?)))]
     (repl-api/start
       {:id (:id build)
        :options (:compiler build)

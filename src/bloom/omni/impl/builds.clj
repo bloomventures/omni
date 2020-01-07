@@ -1,12 +1,13 @@
 (ns bloom.omni.impl.builds)
 
-(defn builds [{:keys [main externs]}]
+(defn builds [{:keys [main externs css?]}]
   [{:id "dev"
-    :figwheel {:websocket-host :js-client-host
-               :mode :serve
-               :open-url false
-               :watch-dirs ["src"]
-               :css-dirs ["resources/public/css"]}
+    :figwheel (merge {:websocket-host :js-client-host
+                      :mode :serve
+                      :open-url false
+                      :watch-dirs ["src"]}
+                     (when css?
+                       {:css-dirs ["resources/public/css"]}))
     :source-paths ["src"]
     :compiler {:main main
                :output-to "resources/public/js/app.js"
