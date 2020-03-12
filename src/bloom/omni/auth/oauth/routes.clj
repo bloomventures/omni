@@ -34,12 +34,14 @@
                                (fn [user]))
                 user-to-session-id (or (oauth-config :user-to-session-id)
                                        :id)]
-            (post-auth! user-info)
-            {:status 200
-             :body {:ok true}
-             :session {:id (user-to-session-id user-info)}})
+            (if (post-auth! user-info)
+              {:status 200
+               :body {:ok true}
+               :session {:id (user-to-session-id user-info)}}
+              {:status 401
+               :body {:error "User denied"}}))
           {:status 401
-           :body {:error "User could not be authenticated"}})))]
+           :body {:error "User could not be authenticated with Google"}})))]
 
    [[:delete "/api/auth"]
     (fn [_]
