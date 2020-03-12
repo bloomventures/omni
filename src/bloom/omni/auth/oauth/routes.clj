@@ -28,7 +28,7 @@
 
    [[:put "/api/auth/authenticate"]
     (fn [request]
-      (let [token (get-in request [:params :token])]
+      (let [token (get-in request [:body-params :token])]
         (if-let [user-info (oauth/get-user-info oauth-config token)]
           (let [post-auth! (or (oauth-config :post-auth-fn)
                                (fn [user]))
