@@ -80,9 +80,9 @@
 ; (auth/register)
 
 ; effects in events:
-; {:auth [:init! after-fn]}
-; {:auth [:log-in! after-fn]}
-; {:auth [:log-out! after-fn]}
+; {:omni/auth [:init! after-fn]}
+; {:omni/auth [:log-in! after-fn]}
+; {:omni/auth [:log-out! after-fn]}
 
 ; data in events:
 ; (auth/get db [:logged-in?])
