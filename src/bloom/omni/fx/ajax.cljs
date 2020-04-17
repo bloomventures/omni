@@ -1,8 +1,20 @@
 (ns bloom.omni.fx.ajax
   "Provides a re-frame fx for making ajax calls with transit encoding."
   (:require
+    [clojure.string :as string]
     [ajax.core :as ajax]
+    [ajax.interceptors :as ajax.interceptors]
     [cognitect.transit :as transit]))
+
+(defn empty-means-nil [response]
+  (if (string/blank? (ajax.protocols/-body response))
+    (reduced [(-> response ajax.protocols/-status ajax.core/success?) nil])
+    response))
+
+(def treat-empty-as-nil
+  (ajax.interceptors/to-interceptor
+    {:name "Transit special case nil"
+     :response empty-means-nil}))
 
 (defn fx
   [{:keys [uri method params body format on-success on-error headers timeout response-format credentials?]
@@ -29,4 +41,5 @@
            (on-error response)))
        :format format
        :response-format response-format
-       :with-credentials credentials?})))
+       :with-credentials credentials?
+       :interceptors [treat-empty-as-nil]})))
