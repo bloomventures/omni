@@ -17,7 +17,6 @@
                    :content-types true
                    :default-charset "utf-8"}
        :security {:ssl-redirect production?
-                  :frame-options :sameorigin
                   :content-type-options :nosniff
                   :hsts production?}}
       (merge (when session?
