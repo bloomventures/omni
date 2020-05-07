@@ -27,7 +27,11 @@
                                        (ring/->handler
                                          (if (= :prod (config :omni/environment))
                                            (var-get (config :omni/api-routes))
-                                           (config :omni/api-routes)))]
+                                           (config :omni/api-routes)))
+                                       (ring/->handler
+                                         [[[:any "/api/*"]
+                                           (fn [_]
+                                             {:status 404})]])]
                                       (remove nil?)
                                       (apply ring/combine)
                                       ((middleware/make-api-middleware middleware-config)))
