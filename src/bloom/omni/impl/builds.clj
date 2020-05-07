@@ -14,8 +14,7 @@
                :asset-path "/js/dev"
                :output-dir "resources/public/js/dev"
                :closure-defines {"goog.DEBUG" true}
-               :parallel-build true
-               :verbose true}}
+               :parallel-build true}}
    {:id "prod"
     :source-paths ["src"]
     :compiler (merge {:main main
