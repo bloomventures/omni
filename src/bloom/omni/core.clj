@@ -73,10 +73,12 @@
                               ((component :start) config))}))
 
 (defn start! [component config]
-  (-start! component (config/read config)))
+  (-start! component (config/read config))
+  nil)
 
 (defn stop! []
   (doseq [{:keys [component value]} @state]
     (when (component :stop)
       ((component :stop) value)))
-  (reset! state []))
+  (reset! state [])
+  nil)
