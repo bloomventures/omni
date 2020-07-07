@@ -18,7 +18,7 @@
                  [clout "2.2.1"] ; clj-router
                  [clojure.java-time "0.3.2"] ; impl.crypto
                  [commons-codec "1.12"] ; impl.crypto
-                 [com.bhauman/figwheel-main "0.2.0"] ; figwheel
+                 [com.bhauman/figwheel-main "0.2.9"] ; figwheel
                  [garden "1.3.9"] ; impl.cssbuild
                  [hawk "0.2.11"] ; css-watcher
                  [hiccup "1.0.5"] ; spa, auth.google
