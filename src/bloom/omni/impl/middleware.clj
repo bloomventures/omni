@@ -38,9 +38,10 @@
   [handler frame-options]
   (if-let [domain (:allow-from frame-options)]
     (fn [req]
-      (assoc-in (handler req)
-                [:headers "Content-Security-Policy"]
-                (str "frame-src " domain)))
+      (when-let [resp (handler req)]
+        (assoc-in resp
+                  [:headers "Content-Security-Policy"]
+                  (str "frame-src " domain))))
     handler))
 
 (defn make-api-middleware
