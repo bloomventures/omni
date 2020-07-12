@@ -34,12 +34,21 @@
                                           (when (not= false cookie-same-site)
                                             {:same-site (or cookie-same-site :strict)}))}}))))
 
+(defn wrap-frames-csp
+  [handler frame-options]
+  (if-let [domain (:allow-from frame-options)]
+    (fn [req]
+      (assoc-in (handler req) [:headers "Content-Security-Policy"]
+                (str "frame-src " domain)))
+    identity))
+
 (defn make-api-middleware
   "Returns API defaults middleware"
   [{:keys [production? session? token-secret cookie-secret cookie-name frame-options] :as opts}]
   (fn [handler]
     (-> handler
         (wrap-format)
+        (wrap-frames-csp frame-options)
         (wrap-defaults (defaults-config opts)))))
 
 (defn make-spa-middleware
@@ -49,4 +58,5 @@
         ((if token-secret
            (auth.token/make-token-auth-middleware token-secret)
            identity))
+        (wrap-frames-csp frame-options)
         (wrap-defaults (defaults-config opts)))))
