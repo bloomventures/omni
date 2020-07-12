@@ -36,7 +36,7 @@
   :plugins [[com.roomkey/lein-v "7.1.0"]]
 
   ;; run 'lein release :minor' for breaking changes
-  ;; run 'lein release :path' for non-breaking changes
+  ;; run 'lein release :patch' for non-breaking changes
   :release-tasks [["vcs" "assert-committed"]
                   ["v" "update"]
                   ["vcs" "push"]
