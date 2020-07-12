@@ -6,7 +6,8 @@
     [bloom.omni.auth.token :as auth.token]))
 
 (defn defaults-config
-  [{:keys [production? session? cookie-secret cookie-name cookie-same-site]}]
+  [{:keys [production? session? cookie-secret cookie-name cookie-same-site
+           frame-options]}]
   (when (and production? session? (nil? cookie-secret))
     (throw (Exception. (str "Must set a cookie-secret in production."))))
   (-> {:proxy production?
@@ -16,9 +17,10 @@
                    :absolute-redirects true
                    :content-types true
                    :default-charset "utf-8"}
-       :security {:ssl-redirect production?
-                  :content-type-options :nosniff
-                  :hsts production?}}
+       :security (cond-> {:ssl-redirect production?
+                          :content-type-options :nosniff
+                          :hsts production?}
+                   frame-options (assoc :frame-options frame-options))}
       (merge (when session?
                {:cookies true
                 :session {:store (cookie-store {:key (or cookie-secret "dev-only-secret!")})
@@ -34,14 +36,14 @@
 
 (defn make-api-middleware
   "Returns API defaults middleware"
-  [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
+  [{:keys [production? session? token-secret cookie-secret cookie-name frame-options] :as opts}]
   (fn [handler]
     (-> handler
         (wrap-format)
         (wrap-defaults (defaults-config opts)))))
 
 (defn make-spa-middleware
-  [{:keys [production? session? token-secret cookie-secret cookie-name] :as opts}]
+  [{:keys [production? session? token-secret cookie-secret cookie-name frame-options] :as opts}]
   (fn [handler]
     (-> handler
         ((if token-secret
