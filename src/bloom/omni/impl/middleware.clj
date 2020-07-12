@@ -41,7 +41,7 @@
       (when-let [resp (handler req)]
         (assoc-in resp
                   [:headers "Content-Security-Policy"]
-                  (str "frame-src " domain))))
+                  (str "frame-ancestors " domain))))
     handler))
 
 (defn make-api-middleware
