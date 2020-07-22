@@ -22,7 +22,8 @@
                  [garden "1.3.9"] ; impl.cssbuild
                  [hawk "0.2.11"] ; css-watcher
                  [hiccup "1.0.5"] ; spa, auth.google
-                 [http-kit "2.3.0"] ; http-server
+
+                 [http-kit "2.4.0-beta1"] ;; http-server
                  [metosin/spec-tools "0.9.1"] ; config
                  [org.clojure/core.async "0.4.490"] ; impl.async
                  [ring/ring-core "1.7.1"] ; spa

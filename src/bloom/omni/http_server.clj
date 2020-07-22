@@ -6,7 +6,14 @@
   (http-server/start! 1523 handler)
   ```"
   (:require
+    [org.httpkit.client]
+    [org.httpkit.sni-client]
     [org.httpkit.server :refer [run-server]]))
+
+;; because we often use http-kit as our http-client
+;; including this so that SNI works
+(alter-var-root #'org.httpkit.client/*default-client*
+                (fn [_] org.httpkit.sni-client/default-client))
 
 (defn stop!
   [server]
