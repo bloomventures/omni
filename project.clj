@@ -10,7 +10,7 @@
                  [com.google.code.findbugs/jsr305 "3.0.2"]
 
                  [org.clojure/clojure "1.10.0"]
-                 [org.clojure/clojurescript "1.10.520"]
+                 [org.clojure/clojurescript "1.10.764"]
 
                  [com.cognitect/transit-cljs "0.8.256"] ; fx.ajax
                  [cljsbuild "1.1.7" :exclude [org.clojure/clojure]] ; figwheel
