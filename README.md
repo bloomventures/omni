@@ -32,7 +32,8 @@ Somewhere in your app, have a function to start omni:
 (ns app.core
   (:gen-class)
   (:require
-    [bloom.omni.core :as omni]))
+    [bloom.omni.core :as omni]
+    [app.config :refer [config]]))
 
 (def routes
   [[[:get "/api/:id"]
@@ -44,7 +45,10 @@ Somewhere in your app, have a function to start omni:
   {:omni/title "My Title"
    :omni/cljs {:main "app.core"}
    :omni/css {:styles "app.styles/styles"}
-   :omni/api-routes #'routes})
+   :omni/api-routes #'routes
+   :omni/http-port (config :http-port)
+   :omni/environment (config :environment)
+   })
 
 (defn start! []
   (omni/start! omni/system config))
@@ -56,18 +60,6 @@ Somewhere in your app, have a function to start omni:
   (start!))
 ```
 
-In dev, you should probably also have a `config.edn` at the root of the project (i.e. in the same directory as your `project.clj`) with:
-```
-{:omni/http-port 1234}
-```
-
-In production, you should probably pass the following env vars:
-
-```
-   HTTP_PORT=1234
-   ENVIRONMENT=prod
-```
-
 Conventions:
 
 - expects `init()` and `reload()` fns in the main cljs namespace (remember to mark as ^:export)
@@ -75,19 +67,28 @@ Conventions:
 
 ## Omni Auth
 
-Add the following `config.edn`:
+Add the following to config:
 
+
+Cookie auth:
+
+```
+{:omni/auth {:cookie {:name "myapp"
+                      :secret "...."}}
+```
+
+Token auth (email):
+```
+{:omni/auth {:token {:secret "...."}}
+```
+
+
+Google auth (also needs cookie):
 ```
 {:omni/auth {:oauth {:google {:client-id "key-from-google"
                               :domain "http://localhost:1234"}}}}
 ```
 
-In prod, pass the following env vars:
-```
-COOKIE_SECRET="16-byte-string"
-CLIENT_ID="key-from-google"
-DOMAIN="https://domain.in.prod.com"
-```
 
 See `bloom.omni.auth.oauth.fx` for re-frame helpers.
 
