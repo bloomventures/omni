@@ -49,6 +49,9 @@
   [{:keys [production? session? token-secret cookie-secret cookie-name frame-options] :as opts}]
   (fn [handler]
     (-> handler
+        ((if token-secret
+           (auth.token/make-token-auth-middleware token-secret)
+           identity))
         (wrap-format)
         (wrap-frames-csp frame-options)
         (wrap-defaults (defaults-config opts)))))
