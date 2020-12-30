@@ -20,7 +20,6 @@
                  [hiccup "1.0.5"] ; spa, auth.google
 
                  [http-kit "2.5.0"] ;; http-server
-                 [metosin/spec-tools "0.9.1"] ; config
                  [org.clojure/core.async "0.4.490"] ; impl.async
                  [ring/ring-core "1.8.1"] ; spa
                  [ring/ring-defaults "0.3.2"] ; ring
