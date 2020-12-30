@@ -3,7 +3,6 @@
     [clojure.data.json :as json]
     [hiccup.core :as hiccup]
     [org.httpkit.client :as http]
-    [org.httpkit.sni-client :refer [default-client]]
     [ring.util.codec :refer [form-encode]]))
 
 (defn html []
@@ -25,7 +24,6 @@
 (defn- valid-token? [oauth-config token]
   (let [resp (-> @(http/request
                     {:method :get
-                     :client default-client
                      :url (str "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=" token)})
                  :body
                  (json/read-str :key-fn keyword))]
@@ -36,7 +34,6 @@
   (when (valid-token? oauth-config token)
     (let [resp (-> @(http/request
                       {:method :get
-                       :client default-client
                        :url (str "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" token)})
                    :body
                    (json/read-str :key-fn keyword))]
