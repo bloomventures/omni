@@ -4,7 +4,7 @@
     [re-frame.db :refer [app-db]]
     [reagent.ratom :as r]
     [re-frame.core :refer [reg-fx reg-sub]]
-    [bloom.omni.fx.ajax :as ajax]))
+    [bloom.commons.ajax :as ajax]))
 
 (defn- db-set! [m]
   (swap! app-db update :omni/auth merge m))
@@ -14,7 +14,7 @@
 
 (defn- check-authentication!
   [after-fn]
-  (ajax/fx
+  (ajax/request
     {:method :get
      :uri "/api/auth/user"
      :on-success
@@ -23,7 +23,7 @@
        (after-fn user))}))
 
 (defn- remote-oauth! [token]
-  (ajax/fx
+  (ajax/request
     {:method :put
      :uri "/api/auth/authenticate"
      :params {:token token}
@@ -61,7 +61,7 @@
 
 (defn- log-out!
   [after-fn]
-  (ajax/fx
+  (ajax/request
     {:uri "/api/auth"
      :method :delete
      :on-success
