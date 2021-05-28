@@ -2,7 +2,7 @@
 
 (defn builds [{:keys [main externs css?]}]
   [{:id "dev"
-    :figwheel (merge {:websocket-host :js-client-host
+    :figwheel (merge {:connect-url "ws://[[client-hostname]]:[[server-port]]/figwheel-connect"
                       :mode :serve
                       :open-url false
                       :watch-dirs ["src"]}
