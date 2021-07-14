@@ -8,7 +8,8 @@
    [:omni/title {:optional true} string?]
    [:omni/css {:optional true}
     [:map
-     [:styles string?]]]
+     [:styles {:optional true} string?]
+     [:tailwind? {:optional true} boolean?]]]
    [:omni/cljs
     [:map
      [:main string?]
