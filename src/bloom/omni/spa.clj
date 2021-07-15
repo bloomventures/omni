@@ -20,16 +20,19 @@
             :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
     (when (io/resource "public/manifest.webmanifest")
       [:link {:rel "manifest" :href "/manifest.webmanifest"}])
-    (when (get-in config [:omni/css])
-      (let [digest (crypto/sha256-file (io/resource "public/css/styles.css"))
-            digest-gz (crypto/sha256-file (io/resource "public/css/styles.css.gz"))]
-        [:link {:rel "stylesheet"
-                :href (str "/css/styles.css?v=" digest)
-                :media "screen"
-                :integrity (->> [digest digest-gz]
-                                (remove nil?)
-                                (map (fn [d] (str "sha256-" d)))
-                                (string/join " "))}]))]
+    (->> [(when (get-in config [:omni/css :styles]) "public/css/styles.css")
+          (when (get-in config [:omni/css :tailwind?]) "public/css/twstyles.css")]
+         (remove nil?)
+         (map (fn [path]
+                (let [digest (crypto/sha256-file (io/resource path))
+                      digest-gz (crypto/sha256-file (io/resource (str path ".gz")))]
+                  [:link {:rel "stylesheet"
+                          :href (str (string/replace path "public" "") "?v=" digest)
+                          :media "screen"
+                          :integrity (->> [digest digest-gz]
+                                          (remove nil?)
+                                          (map (fn [d] (str "sha256-" d)))
+                                          (string/join " "))}]))))]
    (when (get-in config [:omni/cljs])
      [:body
       [:div#app

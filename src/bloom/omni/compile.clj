@@ -5,7 +5,8 @@
     [bloom.omni.impl.gzip :as gzip]
     [bloom.omni.impl.cljsbuild :as cljsbuild]
     [bloom.omni.impl.config :as config]
-    [bloom.omni.impl.cssbuild :as cssbuild]))
+    [bloom.omni.impl.cssbuild :as cssbuild]
+    [bloom.omni.impl.tailwind :as tailwind]))
 
 (defn touch [& paths]
   (let [t (System/currentTimeMillis)]
@@ -13,11 +14,18 @@
       (.setLastModified (io/file path) t))))
 
 (defn compile-css! [config]
-  (when (config :omni/css)
+  (when (get-in config [:omni/css :styles])
     (let [path "resources/public/css/styles.css"]
       (cssbuild/compile! {:styles (get-in config [:omni/css :styles])
                           :output-to path
                           :pretty-print? false})
+      (gzip/compress path)
+      (touch path (str path ".gz")))))
+
+(defn compile-girouette-css! [config]
+  (when (get-in config [:omni/css :tailwind?])
+    (let [path (get-in tailwind/opts [:css :output-file])]
+      (tailwind/compile!)
       (gzip/compress path)
       (touch path (str path ".gz")))))
 
@@ -39,4 +47,5 @@
 (defn compile! [config]
   (let [config (config/read config)]
     (compile-css! config)
+    (compile-girouette-css! config)
     (compile-js! config)))

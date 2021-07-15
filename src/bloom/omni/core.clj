@@ -9,8 +9,7 @@
     [bloom.omni.auth.oauth.routes :as oauth.routes]
     [bloom.omni.spa :as spa]
     [bloom.omni.impl.config :as config]
-    [girouette.processor]
-    [hawk.core :as hawk]))
+    [bloom.omni.impl.tailwind :as tailwind]))
 
 (def http-server
   {:start (fn [config]
@@ -46,13 +45,10 @@
 (def girouette-watcher
   {:start (fn [config]
             (when (get-in config [:omni/css :tailwind?])
-              (girouette.processor/process
-                {:css {:output-file "resources/public/css/styles.css"}
-                 :input {:file-filters [".cljs" ".cljc"]}
-                 :watch? true})))
+              (tailwind/start!)))
    :stop (fn [self]
            (when self
-             (hawk/stop! self)))})
+             (tailwind/stop! self)))})
 
 (def css-watcher
   {:start (fn [config]
