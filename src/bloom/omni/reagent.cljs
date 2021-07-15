@@ -1,5 +1,6 @@
 (ns bloom.omni.reagent
   (:require
+    [clojure.string :as string]
     [reagent.dom :as rdom]
     [reagent.impl.protocols :as reagent.p]
     [reagent.impl.template :as reagent.t]
@@ -20,12 +21,17 @@
         (reagent.t/as-element this x fn-to-element))
       (make-element [this argv component jsprops first-child]
         ;; merge :tw prop into :className
-        (when (o/get jsprops "tw")
-          (doto jsprops
-            (o/set "className"
-                   (str (o/get jsprops "className")
-                        " " (o/get jsprops "tw")))
-            (o/remove "tw")))
+        (let [tw (o/get jsprops "tw")]
+          (when tw
+            (doto jsprops
+              (o/set "className"
+                     (str (o/get jsprops "className")
+                          " " (cond
+                                (string? tw)
+                                tw
+                                (seq tw)
+                                (string/join " " (remove nil? tw)))))
+              (o/remove "tw"))))
         (reagent.t/make-element this argv component jsprops first-child)))))
 
 (defn render
