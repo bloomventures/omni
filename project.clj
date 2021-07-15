@@ -29,7 +29,10 @@
                  [clj-commons/secretary "1.2.4"] ; fx.router
                  ; [venantius/accountant "0.2.4"] ; fx.router ;; take from bloom.commons
 
-                 [leiningen-core "2.9.0"]]
+                 [leiningen-core "2.9.0"]
+                 [reagent "1.1.0"]
+                 [cljsjs/react "17.0.2-0"]
+                 [cljsjs/react-dom "17.0.2-0"]]
 
   :plugins [[com.roomkey/lein-v "7.1.0"]]
 
