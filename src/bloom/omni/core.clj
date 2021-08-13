@@ -24,6 +24,10 @@
                 {:port (or (config :omni/http-port)
                            (port/next-available))
                  :handler (->> (ring/combine
+                                 (ring/->handler
+                                   (if (= :prod (config :omni/environment))
+                                     (var-get (config :omni/raw-routes))
+                                     (config :omni/raw-routes)))
                                  (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
                                          (ring/->handler (oauth.routes/routes oauth-config)))
                                        (ring/->handler
