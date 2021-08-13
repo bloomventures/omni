@@ -1,6 +1,6 @@
 (defproject io.bloomventures/omni :lein-v
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [org.clojure/clojurescript "1.10.764"
+                 [org.clojure/clojurescript "1.10.879"
                   :exclusions [com.cognitect/transit-clj ; newer in bloom.commons
                                ]]
 
@@ -13,7 +13,7 @@
                  [clout "2.2.1"] ; clj-router
                  [clojure.java-time "0.3.2"] ; impl.crypto
                  [commons-codec "1.12"] ; impl.crypto
-                 [com.bhauman/figwheel-main "0.2.11"
+                 [com.bhauman/figwheel-main "0.2.13"
                   :exclusions [org.clojure/clojurescript]] ; figwheel
                  [garden "1.3.9"] ; impl.cssbuild
                  [hawk "0.2.11"] ; css-watcher
