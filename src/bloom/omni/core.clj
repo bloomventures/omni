@@ -23,26 +23,28 @@
               (http-server/start!
                 {:port (or (config :omni/http-port)
                            (port/next-available))
-                 :handler (->> (ring/combine
-                                 (ring/->handler
-                                   (if (= :prod (config :omni/environment))
-                                     (var-get (config :omni/raw-routes))
-                                     (config :omni/raw-routes)))
-                                 (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
-                                         (ring/->handler (oauth.routes/routes oauth-config)))
-                                       (ring/->handler
-                                         (if (= :prod (config :omni/environment))
-                                           (var-get (config :omni/api-routes))
-                                           (config :omni/api-routes)))
-                                       (ring/->handler
-                                         [[[:any "/api/*"]
-                                           (fn [_]
-                                             {:status 404})]])]
-                                      (remove nil?)
-                                      (apply ring/combine)
-                                      ((middleware/make-api-middleware middleware-config)))
-                                 (->> (ring/->handler (spa/routes config))
-                                      ((middleware/make-spa-middleware middleware-config)))))})))
+                 :handler (->> [(when (config :omni/raw-routes)
+                                   (ring/->handler
+                                     (if (= :prod (config :omni/environment))
+                                       (var-get (config :omni/raw-routes))
+                                       (config :omni/raw-routes))))
+                                (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
+                                        (ring/->handler (oauth.routes/routes oauth-config)))
+                                      (ring/->handler
+                                        (if (= :prod (config :omni/environment))
+                                          (var-get (config :omni/api-routes))
+                                          (config :omni/api-routes)))
+                                      (ring/->handler
+                                        [[[:any "/api/*"]
+                                          (fn [_]
+                                            {:status 404})]])]
+                                     (remove nil?)
+                                     (apply ring/combine)
+                                     ((middleware/make-api-middleware middleware-config)))
+                                (->> (ring/->handler (spa/routes config))
+                                     ((middleware/make-spa-middleware middleware-config)))]
+                               (remove nil?)
+                               (apply ring/combine))})))
    :stop (fn [self]
            (http-server/stop! self))})
 
