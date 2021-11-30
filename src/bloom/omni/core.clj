@@ -30,10 +30,11 @@
                                        (config :omni/raw-routes))))
                                 (->> [(when-let [oauth-config (get-in config [:omni/auth :oauth])]
                                         (ring/->handler (oauth.routes/routes oauth-config)))
-                                      (ring/->handler
-                                        (if (= :prod (config :omni/environment))
-                                          (var-get (config :omni/api-routes))
-                                          (config :omni/api-routes)))
+                                      (when (config :omni/api-routes)
+                                        (ring/->handler
+                                          (if (= :prod (config :omni/environment))
+                                            (var-get (config :omni/api-routes))
+                                            (config :omni/api-routes))))
                                       (ring/->handler
                                         [[[:any "/api/*"]
                                           (fn [_]
