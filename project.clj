@@ -17,7 +17,7 @@
                   :exclusions [org.clojure/clojurescript]] ; figwheel
                  [garden "1.3.9"] ; impl.cssbuild
                  [hawk "0.2.11"] ; css-watcher
-                 [girouette/girouette "0.0.3"] ; girouette-watcher
+                 [girouette/girouette "0.0.6"] ; girouette-watcher
                  [girouette/processor "0.0.2"] ; girouette-watcher
                  [hiccup "1.0.5"] ; spa, auth.google
 
