@@ -8,12 +8,15 @@
    :input {:file-filters [".cljs" ".cljc"]}
    :verbose? false})
 
-(defn start! []
-  (girouette.processor/process (assoc opts :watch? true)))
+(defn start!
+  [extra-opts]
+  (girouette.processor/process (merge (assoc opts :watch? true)
+                                      extra-opts)))
 
 (defn stop!
   [self]
   (hawk/stop! self))
 
-(defn compile! []
-  (girouette.processor/process opts))
+(defn compile!
+  [extra-opts]
+  (girouette.processor/process (merge opts extra-opts)))

@@ -25,7 +25,7 @@
 (defn compile-girouette-css! [config]
   (when (get-in config [:omni/css :tailwind?])
     (let [path (get-in tailwind/opts [:css :output-file])]
-      (tailwind/compile!)
+      (tailwind/compile! (get-in config [:omni/css :tailwind-opts] {}))
       (gzip/compress path)
       (touch path (str path ".gz")))))
 

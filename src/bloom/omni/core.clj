@@ -52,7 +52,7 @@
 (def girouette-watcher
   {:start (fn [config]
             (when (get-in config [:omni/css :tailwind?])
-              (tailwind/start!)))
+              (tailwind/start! (get-in config [:omni/css :tailwind-opts] {}))))
    :stop (fn [self]
            (when self
              (tailwind/stop! self)))})

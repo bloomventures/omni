@@ -9,7 +9,8 @@
    [:omni/css {:optional true}
     [:map
      [:styles {:optional true} string?]
-     [:tailwind? {:optional true} boolean?]]]
+     [:tailwind? {:optional true} boolean?]
+     [:tailwind-opts {:optional true} map?]]]
    [:omni/cljs
     [:map
      [:main string?]
