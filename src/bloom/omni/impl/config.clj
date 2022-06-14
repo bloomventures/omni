@@ -11,7 +11,7 @@
      [:styles {:optional true} string?]
      [:tailwind? {:optional true} boolean?]
      [:tailwind-opts {:optional true} map?]]]
-   [:omni/cljs
+   [:omni/cljs {:optional true}
     [:map
      [:main string?]
      [:externs {:optional true}
