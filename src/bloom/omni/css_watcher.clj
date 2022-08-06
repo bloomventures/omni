@@ -9,10 +9,11 @@
   ```"
   (:require
     [clojure.string :as string]
-    [hawk.core :as hawk]
-    [bloom.omni.impl.css :as css]
+    [nextjournal.beholder :as beholder]
     [bloom.omni.impl.cssbuild :as cssbuild]
-    [bloom.omni.impl.async :as async]))
+    [bloom.omni.impl.async :as async])
+  (:import
+   (java.nio.file Path)))
 
 (def previous-output-hash (atom nil))
 
@@ -23,21 +24,20 @@
   (async/debounce
     (fn [{:keys [output-to] :as css-config}]
       (try
-        (do
-          (cssbuild/mkdirs output-to)
-          (let [output (cssbuild/compile-css css-config)
-                output-hash (hash output)]
-            (when (not= output-hash @previous-output-hash)
-              (spit output-to output)
-              (reset! previous-output-hash output-hash))))
-        (catch Exception e
+        (cssbuild/mkdirs output-to)
+        (let [output (cssbuild/compile-css css-config)
+              output-hash (hash output)]
+          (when (not= output-hash @previous-output-hash)
+            (spit output-to output)
+            (reset! previous-output-hash output-hash)))
+        (catch Throwable e
           (println "Unable to compile CSS due to error.")
           (println e))))
     50))
 
 (defn stop! [watcher]
   (println "Stopping CSS watcher...")
-  (hawk/stop! watcher))
+  (beholder/stop watcher))
 
 (defn start! [css-config]
   (println "Starting CSS watcher...")
@@ -47,11 +47,12 @@
 
     (compile! css-config)
 
-    (hawk/watch! [{:paths ["src"]
-                   :handler
-                   (fn [_ {:keys [kind file]}]
-                     (when (and
-                             (.isFile file)
-                             (string/ends-with? (.getName file) "cljc"))
-                       (compile! css-config))
-                     nil)}])))
+    (beholder/watch
+      (fn [{:keys [^Path path]}]
+        (let [file (.toFile path)]
+          (when (and
+                  (.isFile file)
+                  (string/ends-with? (.getName file) "cljc"))
+            (compile! css-config)))
+        nil)
+      "src")))

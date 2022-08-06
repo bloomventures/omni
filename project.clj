@@ -1,6 +1,6 @@
 (defproject io.bloomventures/omni :lein-v
-  :dependencies [[org.clojure/clojure "1.10.1"]
-                 [org.clojure/clojurescript "1.10.879"
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [org.clojure/clojurescript "1.11.54"
                   :exclusions [com.cognitect/transit-clj ; newer in bloom.commons
                                ]]
 
@@ -13,12 +13,12 @@
                  [clout "2.2.1"] ; clj-router
                  [clojure.java-time "0.3.2"] ; impl.crypto
                  [commons-codec "1.12"] ; impl.crypto
-                 [com.bhauman/figwheel-main "0.2.13"
+                 [com.bhauman/figwheel-main "0.2.18"
                   :exclusions [org.clojure/clojurescript]] ; figwheel
                  [garden "1.3.9"] ; impl.cssbuild
-                 [hawk "0.2.11"] ; css-watcher
-                 [girouette/girouette "0.0.6"] ; girouette-watcher
-                 [girouette/processor "0.0.5"] ; girouette-watcher
+                 [com.nextjournal/beholder "1.0.0"] ; css-watcher
+                 [girouette/girouette "0.0.10"] ; girouette-watcher
+                 [girouette/processor "0.0.8"] ; girouette-watcher
                  [hiccup "1.0.5"] ; spa, auth.google
 
                  [http-kit "2.5.0"] ;; http-server
