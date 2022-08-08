@@ -18,7 +18,7 @@
 
 (defn stop!
   [self]
-  (beholder/stop @self))
+  (beholder/stop self))
 
 (defn compile!
   [extra-opts]
