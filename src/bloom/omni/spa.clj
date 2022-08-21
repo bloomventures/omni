@@ -32,7 +32,8 @@
                           :integrity (->> [digest digest-gz]
                                           (remove nil?)
                                           (map (fn [d] (str "sha256-" d)))
-                                          (string/join " "))}]))))]
+                                          (string/join " "))}]))))
+    (seq (get-in config [:omni/html-head-includes]))]
    (when (get-in config [:omni/cljs])
      [:body
       [:div#app

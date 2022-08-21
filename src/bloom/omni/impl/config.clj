@@ -20,6 +20,8 @@
    [:omni/environment {:optional true} [:enum :prod :dev]]
    [:omni/api-routes {:optional true} [:fn 'any? #_var?]]
    [:omni/raw-routes {:optional true} [:fn 'any?]]
+   [:omni/html-head-includes {:optional true}
+    [:vector 'any?]]
    [:omni/js-scripts {:optional true}
     [:vector
      [:map
