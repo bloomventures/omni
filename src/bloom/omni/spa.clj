@@ -83,6 +83,11 @@
                     "max-age=365000000, immutable")
                   (assoc-in [:headers "ETag"] resource-etag)))))]
 
+     [[:head "/js/app.js"]
+      (fn [_]
+        (let [resource-etag (crypto/sha256-file (io/resource "public/js/app.js"))]
+          {:status 200 :headers {"ETag" resource-etag}}))]
+
    [[:get "/*"]
     (fn [r]
       (resource-response (str "public/" (-> r :params :*))))]
