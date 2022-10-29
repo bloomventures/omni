@@ -7,6 +7,7 @@
     [clojure.java.io :as io]
     [clojure.string :as string]
     [hiccup.core :refer [html]]
+    [ring.util.codec :as ring-codec]
     [ring.util.response :as ring.response]
     [ring.util.mime-type :as ring.mime]
     [bloom.omni.impl.crypto :as crypto]))
@@ -90,7 +91,7 @@
 
    [[:get "/*"]
     (fn [r]
-      (resource-response (str "public/" (-> r :params :*))))]
+      (resource-response (str "public/" (ring-codec/percent-decode (-> r :params :*)))))]
 
    [[:get "/*"]
     (fn [_]
