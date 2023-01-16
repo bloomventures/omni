@@ -25,6 +25,8 @@
                       :parallel-build true
                       :infer-externs true
                       :static-fns true
-                      :fn-invoke-direct true}
+                      :fn-invoke-direct true
+                      :language-in :ecmascript-next
+                      :language-out :ecmascript-2015}
                      (when externs
                        {:externs externs}))}])
