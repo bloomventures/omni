@@ -7,7 +7,8 @@
   {:css {:output-file "resources/public/css/twstyles.css"}
    :input {:file-filters [".cljs" ".cljc"]}
    :verbose? false
-   :garden-fn 'girouette.tw.default-api/tw-v2-class-name->garden})
+   :garden-fn 'girouette.tw.default-api/tw-v3-class-name->garden
+   :base-css-rules ['girouette.tw.preflight/preflight-v3_0_24]})
 
 (defn start!
   [extra-opts]
