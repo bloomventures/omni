@@ -2,7 +2,7 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/clojurescript "1.11.60"
                   :exclusions [com.cognitect/transit-clj ; newer in bloom.commons
-                               ]]
+                               com.fasterxml.jackson.core/jackson-core]]
 
                  ;; overrides
                  [org.clojure/data.xml "0.2.0-alpha6"]
@@ -14,7 +14,6 @@
                  [io.bloomventures/commons "0.13.0"
                   :exclusions
                   [org.clojure/data.xml
-                   com.fasterxml.jackson.core/jackson-core
                    borkdude/edamame
                    org.apache.httpcomponents/httpcore
                    org.clojure/tools.logging
