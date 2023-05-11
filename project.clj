@@ -17,7 +17,6 @@
                    com.fasterxml.jackson.core/jackson-core
                    borkdude/edamame
                    org.apache.httpcomponents/httpcore
-                   org.clojure/data.priority-map
                    org.clojure/tools.logging
                    riddley]]
 
