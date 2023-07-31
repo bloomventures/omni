@@ -7,6 +7,7 @@
     [clojure.java.io :as io]
     [clojure.string :as string]
     [hiccup.core :refer [html]]
+    [hiccup.page :as hiccup-page]
     [ring.util.codec :as ring-codec]
     [ring.util.response :as ring.response]
     [ring.util.mime-type :as ring.mime]
@@ -97,4 +98,4 @@
     (fn [_]
       {:status 200
        :headers {"Content-Type" "text/html; charset=utf-8"}
-       :body (html (index-page config))})]])
+       :body (html (hiccup-page/doctype :html5) (index-page config))})]])
