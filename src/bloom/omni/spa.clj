@@ -22,8 +22,8 @@
             :content "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"}]
     (when (io/resource "public/manifest.webmanifest")
       [:link {:rel "manifest" :href "/manifest.webmanifest"}])
-    (->> [(when (get-in config [:omni/css :styles]) "public/css/styles.css")
-          (when (get-in config [:omni/css :tailwind?]) "public/css/twstyles.css")]
+    (->> [(when (get-in config [:omni/css :tailwind?]) "public/css/twstyles.css")
+          (when (get-in config [:omni/css :styles]) "public/css/styles.css")]
          (remove nil?)
          (map (fn [path]
                 (let [digest (crypto/sha256-file (io/resource path))
