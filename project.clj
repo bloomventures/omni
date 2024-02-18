@@ -11,7 +11,7 @@
                  [riddley "0.1.12"]
                  [org.codehaus.plexus/plexus-utils "3.4.1"]
 
-                 [io.bloomventures/commons "0.13.0"
+                 [io.bloomventures/commons "0.14.0"
                   :exclusions
                   [org.clojure/data.xml
                    borkdude/edamame

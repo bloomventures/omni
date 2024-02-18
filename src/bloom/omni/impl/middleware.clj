@@ -1,9 +1,10 @@
 (ns bloom.omni.impl.middleware
   (:require
-    [muuntaja.middleware :refer [wrap-format]]
+    [muuntaja.middleware :as mj]
     [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.middleware.defaults :refer [wrap-defaults]]
-    [bloom.omni.auth.token :as auth.token]))
+    [bloom.omni.auth.token :as auth.token]
+    [bloom.commons.muuntaja :as bloom.mj]))
 
 (defn defaults-config
   [{:keys [production? session? cookie-secret cookie-name cookie-same-site
@@ -52,7 +53,7 @@
         ((if token-secret
            (auth.token/make-token-auth-middleware token-secret)
            identity))
-        (wrap-format)
+        (mj/wrap-format bloom.mj/options)
         (wrap-frames-csp frame-options)
         (wrap-defaults (defaults-config opts)))))
 
