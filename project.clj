@@ -11,14 +11,12 @@
                  ;; overrides
                  [org.clojure/data.xml "0.2.0-alpha6"]
                  [instaparse "1.4.12"]
-                 [borkdude/edamame "0.0.11-alpha.21"]
                  [riddley "0.1.12"]
                  [org.codehaus.plexus/plexus-utils "3.4.1"]
 
                  [io.bloomventures/commons "0.14.0"
                   :exclusions
                   [org.clojure/data.xml
-                   borkdude/edamame
                    org.apache.httpcomponents/httpcore
                    org.clojure/tools.logging
                    riddley]]
