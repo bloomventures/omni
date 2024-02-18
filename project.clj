@@ -1,4 +1,8 @@
 (defproject io.bloomventures/omni :lein-v
+  :description "homebrew spa web framework used by bloom"
+  :license {:name "Eclipse Public License - v 1.0"
+            :url "http://www.eclipse.org/legal/epl-v10.html"
+            :distribution :repo}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/clojurescript "1.11.60"
                   :exclusions [com.cognitect/transit-clj ; newer in bloom.commons
