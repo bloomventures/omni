@@ -44,6 +44,8 @@
                  [clj-commons/secretary "1.2.4"] ; fx.router
                  ; [venantius/accountant "0.2.4"] ; fx.router ;; take from bloom.commons
 
+                 [com.github.rafd/sys "0.3.1"]
+
                  [leiningen-core "2.9.0"]
 
                  ; [reagent "1.1.0] ;; take from bloom.commons
