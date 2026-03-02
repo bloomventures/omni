@@ -31,9 +31,7 @@
                  [com.nextjournal/beholder "1.0.3" ; css-watcher
                   :exclusions [org.slf4j/slf4j-api]]
                  [girouette/girouette "0.0.10"] ; girouette-watcher
-                 [girouette/processor "0.0.8" ; girouette-watcher
-                  :exclusions [org.eclipse.jetty/jetty-util
-                               org.clojure/tools.analyzer]]
+                 [rewrite-clj "1.2.51"]
                  [hiccup "1.0.5"] ; spa, auth.google
 
                  [http-kit "2.8.1"] ;; http-server
