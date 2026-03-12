@@ -25,8 +25,7 @@
                                ]]
                  [clojure.java-time "1.4.3"] ; auth.token
                  [commons-codec "1.21.0"] ; impl.crypto
-                 [com.bhauman/figwheel-main "0.2.20" ; figwheel
-                  :exclusions [org.clojure/tools.cli]]
+                 [com.bhauman/figwheel-main "0.2.20"] ; figwheel
                  [garden "1.3.10"] ; impl.cssbuild
                  [com.nextjournal/beholder "1.0.3" ; css-watcher
                   :exclusions [org.slf4j/slf4j-api]]
